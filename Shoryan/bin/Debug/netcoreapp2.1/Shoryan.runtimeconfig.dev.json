@@ -1,8 +1,0 @@
-{
-  "runtimeOptions": {
-    "additionalProbingPaths": [
-      "C:\\Users\\nasser\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\nasser\\.nuget\\packages"
-    ]
-  }
-}

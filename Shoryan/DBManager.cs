@@ -4,16 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace DBapplication
 {
     public class DBManager
     {
-        static string DB_Connection_String = @"Data Source=DESKTOP-FT1KHLC;Initial Catalog=CompanyDBLab5;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+
+
         SqlConnection myConnection;
+        public IConfiguration GetConfiguration() {
+            IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            return builder.Build();
+        }
 
         public DBManager()
         {
+            IConfiguration config = GetConfiguration();
+            string DB_Connection_String = config.GetSection("ConnectionStrings").GetSection("DefaultConnection").Value;
+            
+
             myConnection = new SqlConnection(DB_Connection_String);
             try
             {

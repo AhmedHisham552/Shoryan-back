@@ -1,7 +1,7 @@
 ﻿using DBapplication;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Shoryan.Domain;
+using Shoryan.Models;
 using Shoryan.Routes;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Shoryan.Controllers
 {
-    [Produces("application/json")]
+    
     public class PostsController : Controller
     {
         private List<Post> posts;
@@ -31,11 +31,11 @@ namespace Shoryan.Controllers
             try
             {
                 DBManager dbMan = new DBManager();
-                string query = "SELECT * FROM Employee;";
+                string query = "SELECT * FROM Users;";
                 DataTable dt = dbMan.ExecuteReader(query);
                 string result = JsonConvert.SerializeObject(dt, Newtonsoft.Json.Formatting.Indented);
                 //if (result == "null") throw new Exception("error kber");
-                return Json(result);
+                return Json(dt);
             }
             catch(Exception e)
             {
@@ -46,7 +46,9 @@ namespace Shoryan.Controllers
 
         [HttpPost("api/add")]
         public JsonResult AddEmployee([FromBody] Employee employee) {
+            
             Employee test = employee;
+
             return Json(employee);
         }
 

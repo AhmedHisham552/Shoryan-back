@@ -9,7 +9,7 @@ namespace Shoryan.Routes
     {
         public static class posts
         {
-            public const string getAll = "api/posts";
+            public const string getAll = "api/employees";
         }
     }
 }

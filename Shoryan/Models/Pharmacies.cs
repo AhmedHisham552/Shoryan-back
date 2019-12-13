@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Shoryan.Models
 {
-    public class Employee
+    public class Pharmacies
     {
-        public string name { get; set; }
+        public int userId { get; set; }
     }
 }

@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Shoryan.Models
 {
-    public class Post
+    public class PhoneNumbers
     {
-        public int id { get; set; }
+        public int number { get; set; }
+        public int userId { get; set; }
     }
 }

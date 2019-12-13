@@ -1,20 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nasser\\Desktop\\Shoryan\\Shoryan\\Shoryan.csproj": {}
+    "D:\\CMP2022\\2ndYear\\Database\\Project\\Shoryan-back\\Shoryan\\Shoryan.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nasser\\Desktop\\Shoryan\\Shoryan\\Shoryan.csproj": {
+    "D:\\CMP2022\\2ndYear\\Database\\Project\\Shoryan-back\\Shoryan\\Shoryan.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nasser\\Desktop\\Shoryan\\Shoryan\\Shoryan.csproj",
+        "projectUniqueName": "D:\\CMP2022\\2ndYear\\Database\\Project\\Shoryan-back\\Shoryan\\Shoryan.csproj",
         "projectName": "Shoryan",
-        "projectPath": "C:\\Users\\nasser\\Desktop\\Shoryan\\Shoryan\\Shoryan.csproj",
-        "packagesPath": "C:\\Users\\nasser\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nasser\\Desktop\\Shoryan\\Shoryan\\obj\\",
+        "projectPath": "D:\\CMP2022\\2ndYear\\Database\\Project\\Shoryan-back\\Shoryan\\Shoryan.csproj",
+        "packagesPath": "C:\\Users\\ahish\\.nuget\\packages\\",
+        "outputPath": "D:\\CMP2022\\2ndYear\\Database\\Project\\Shoryan-back\\Shoryan\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\nasser\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ahish\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

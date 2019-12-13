@@ -14,43 +14,43 @@ namespace Shoryan.Controllers
     
     public class PostsController : Controller
     {
-        private List<Post> posts;
+        //private List<Post> posts;
         
-        public PostsController()
-        {
-            posts = new List<Post>();
-            for(int i=0; i<5; i++)
-            {
-                posts.Add(new Post { id = i });
-            }
-        }
+        //public PostsController()
+        //{
+        //    posts = new List<Post>();
+        //    for(int i=0; i<5; i++)
+        //    {
+        //        posts.Add(new Post { id = i });
+        //    }
+        //}
 
-        [HttpGet(ApiRoutes.posts.getAll)]
-        public IActionResult getAll()
-        {
-            try
-            {
-                DBManager dbMan = new DBManager();
-                string query = "SELECT * FROM Users;";
-                DataTable dt = dbMan.ExecuteReader(query);
-                string result = JsonConvert.SerializeObject(dt, Newtonsoft.Json.Formatting.Indented);
-                //if (result == "null") throw new Exception("error kber");
-                return Json(dt);
-            }
-            catch(Exception e)
-            {
-                return Json(e);
-            }
+        //[HttpGet(ApiRoutes.posts.getAll)]
+        //public IActionResult getAll()
+        //{
+        //    try
+        //    {
+        //        DBManager dbMan = new DBManager();
+        //        string query = "SELECT * FROM Users;";
+        //        DataTable dt = dbMan.ExecuteReader(query);
+        //        string result = JsonConvert.SerializeObject(dt, Newtonsoft.Json.Formatting.Indented);
+        //        //if (result == "null") throw new Exception("error kber");
+        //        return Json(dt);
+        //    }
+        //    catch(Exception e)
+        //    {
+        //        return Json(e);
+        //    }
             
-        }
+        //}
 
-        [HttpPost("api/add")]
-        public JsonResult AddEmployee([FromBody] Employee employee) {
+        //[HttpPost("api/add")]
+        //public JsonResult AddEmployee([FromBody] Employee employee) {
             
-            Employee test = employee;
+        //    Employee test = employee;
 
-            return Json(employee);
-        }
+        //    return Json(employee);
+        //}
 
 
     }

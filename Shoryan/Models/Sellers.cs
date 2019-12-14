@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace Shoryan.Models
 {
-    public class NormalUsers
+    public class Sellers
     {
         public int id { get; set; }
-        public char gender { get; set; }
-        public int balance { get; set; }
     }
 }

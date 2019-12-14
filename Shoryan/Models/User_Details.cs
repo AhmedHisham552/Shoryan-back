@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Shoryan.Models
 {
-    public class Users
+    public class User_Details
     {
         public int id { get; set; }
         public string name { get; set; }
@@ -14,6 +14,6 @@ namespace Shoryan.Models
         public string address { get; set; }
         public float rating { get; set; }
         public string password { get; set; }
-
+        public string imgUrl { get; set; }
     }
 }

@@ -38,12 +38,21 @@ namespace DBapplication
             }
         }
 
-        public int ExecuteNonQuery(string query)
+        public int ExecuteNonQuery(string storedProcedureName, Dictionary<string, object> parameters)
         {
             try
             {
-                SqlCommand myCommand = new SqlCommand(query, myConnection);
+                SqlCommand myCommand = new SqlCommand(storedProcedureName, myConnection);
+
+                myCommand.CommandType = CommandType.StoredProcedure;
+
+                foreach (KeyValuePair<string, object> Param in parameters)
+                {
+                    myCommand.Parameters.Add(new SqlParameter(Param.Key, Param.Value));
+                }
+
                 return myCommand.ExecuteNonQuery();
+               
             }
             catch (Exception ex)
             {
@@ -52,11 +61,22 @@ namespace DBapplication
             }
         }
 
-        public DataTable ExecuteReader(string query)
+        public DataTable ExecuteReader(string storedProcedureName, Dictionary<string, object> parameters)
         {
             try
             {
-                SqlCommand myCommand = new SqlCommand(query, myConnection);
+                SqlCommand myCommand = new SqlCommand(storedProcedureName, myConnection);
+
+                myCommand.CommandType = CommandType.StoredProcedure;
+
+                if (parameters != null)
+                {
+                    foreach (KeyValuePair<string, object> Param in parameters)
+                    {
+                        myCommand.Parameters.Add(new SqlParameter(Param.Key, Param.Value));
+                    }
+                }
+
                 SqlDataReader reader = myCommand.ExecuteReader();
                 if (reader.HasRows)
                 {
@@ -67,8 +87,10 @@ namespace DBapplication
                 }
                 else
                 {
+                    reader.Close();
                     return null;
                 }
+               
             }
             catch (Exception ex)
             {
@@ -77,17 +99,29 @@ namespace DBapplication
             }
         }
 
-        public object ExecuteScalar(string query)
+        public object ExecuteScalar(string storedProcedureName, Dictionary<string, object> parameters)
         {
             try
             {
-                SqlCommand myCommand = new SqlCommand(query, myConnection);
-                return myCommand.ExecuteScalar();
+                SqlCommand myCommand = new SqlCommand(storedProcedureName, myConnection);
+
+                myCommand.CommandType = CommandType.StoredProcedure;
+
+                if (parameters != null)
+                {
+                    foreach (KeyValuePair<string, object> Param in parameters)
+                    {
+                        myCommand.Parameters.Add(new SqlParameter(Param.Key, Param.Value));
+                    }
+                }
+
+                return myCommand.ExecuteScalar();            
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return 0;
+                return null;
             }
         }
 

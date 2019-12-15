@@ -22,12 +22,12 @@ namespace Shoryan.Controllers
 			dbMan = new DBManager();
 		}
 
-		[HttpPost("api/addGiftCard")]
-		public JsonResult addGiftCard(GiftCards giftCard)
+		[HttpPost("api/GiftCards")]
+		public JsonResult addGiftCard([FromBody] Dictionary<string, object> JSONinput)
 		{
-			
+			var giftCardsJson = JsonConvert.SerializeObject(JSONinput["giftCards"], Newtonsoft.Json.Formatting.Indented);
+			var giftCard = JsonConvert.DeserializeObject<GiftCards>(giftCardsJson);
 
-			
 			string StoredProcedureName = GiftCardsProcedures.addGiftCard;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@code", giftCard.code);
@@ -37,7 +37,7 @@ namespace Shoryan.Controllers
 
 		}
 
-		[HttpPost("api/redeemGiftCard")]
+		[HttpPost("api/GiftCards")]
 		public JsonResult redeemGiftCard( [FromBody] Dictionary<string, object> JSONinput)
 		{
 			var giftCardsJson = JsonConvert.SerializeObject(JSONinput["giftCards"], Newtonsoft.Json.Formatting.Indented);
@@ -54,13 +54,16 @@ namespace Shoryan.Controllers
 			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 
-		//[HttpGet("api/addGiftsCards")]
-		//public IActionResult getGiftCards()
-		//{
-		//	string StoredProcedureName = GiftCardsProcedures.getGiftCards;
-		//	Dictionary<string, object> Parameters = new Dictionary<string, object>();
-		//	return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
-		//}
+		[HttpPost("api/addGiftsCards")]
+		public JsonResult getGiftCards([FromBody] Dictionary<string, object> JSONinput)
+		{
+			var giftCardsJson = JsonConvert.SerializeObject(JSONinput["giftCards"], Newtonsoft.Json.Formatting.Indented);
+			var giftCard = JsonConvert.DeserializeObject<GiftCards>(giftCardsJson);
+
+			string StoredProcedureName = GiftCardsProcedures.getGiftCards;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+		}
 
 	}
 }

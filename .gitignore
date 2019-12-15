@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+Shoryan/bin/
+Shoryan/obj/
+
 # User-specific files
 *.rsuser
 *.suo

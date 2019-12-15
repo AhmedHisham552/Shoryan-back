@@ -8,5 +8,8 @@ namespace DBapplication
     public class GiftCardsProcedures
     {
 		public static string addGiftCard = "addGiftCard";
-    }
+		public static string redeemGiftCard = "redeemGiftCard";
+		public static string getGiftCards = "getGiftCards";
+
+	}
 }

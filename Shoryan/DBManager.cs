@@ -50,7 +50,7 @@ namespace DBapplication
                 {
                     myCommand.Parameters.Add(new SqlParameter(Param.Key, Param.Value));
                 }
-
+					
                 return myCommand.ExecuteNonQuery();
                
             }

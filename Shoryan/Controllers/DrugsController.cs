@@ -20,30 +20,25 @@ namespace Shoryan.Controllers
 			dbMan = new DBManager();
 		}
 
-		[HttpGet("api/getDrugsById")]
-		public JsonResult getDrugById([FromBody] Dictionary<string, object> JSONinput)
+		[HttpGet("api/drugs/{drugId}")]
+		public JsonResult getDrugById(int drugId)
 		{
-			var DrugJson = JsonConvert.SerializeObject(JSONinput["Drugs"], Newtonsoft.Json.Formatting.Indented);
-			var Drug = JsonConvert.DeserializeObject<GiftCards>(DrugJson);
-
 			string StoredProcedureName = DrugsProcedures.getDrugById;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
-			Parameters.Add("@drugId", Drug.id);
+			Parameters.Add("@drugId", drugId);
 
 			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
 		}
 
-		[HttpPost("api/getDrugsByCategory")]
-		public JsonResult getDrugsByCategory([FromBody] Dictionary<string, object> JSONinput)
+		[HttpGet("api/drugsByCategory/{categoryId}")]
+		public JsonResult getDrugsByCategory(int categoryId)
 		{
-			var CategoriesJson = JsonConvert.SerializeObject(JSONinput["Categories"], Newtonsoft.Json.Formatting.Indented);
-			var Categories = JsonConvert.DeserializeObject<GiftCards>(CategoriesJson);
 
 			string StoredProcedureName = DrugsProcedures.getDrugById;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
-			Parameters.Add("@categoryId", Categories.id);
+			Parameters.Add("@categoryId", categoryId);
 
 			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
 		}

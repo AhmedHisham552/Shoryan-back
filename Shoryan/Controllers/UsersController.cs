@@ -48,6 +48,7 @@ namespace Shoryan.Controllers
             return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
         }
 
+		[HttpGet("api/users/")]
         public JsonResult getAllUsers()
         {
             string StoredProcedureName = UsersProcedures.getAllUsers;
@@ -56,18 +57,18 @@ namespace Shoryan.Controllers
             return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
         }
 
-        public JsonResult deleteUser([FromBody] Dictionary<string, object> JSONinput)
+		[HttpDelete("api/users/{userId}")]
+		public JsonResult deleteUser(int userId)
         {
-            var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
-            var User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
-
             string StoredProcedureName = UsersProcedures.deleteUser;
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
-            Parameters.Add("@userId", User_Details.id);
+
+            Parameters.Add("@userId", userId);
             return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
         }
 
-        public JsonResult editUserDetails([FromBody] Dictionary<string, object> JSONinput)
+		[HttpPut("api/users/{userId}")]
+		public JsonResult editUserDetails(int userId, [FromBody] Dictionary<string, object> JSONinput)
         {
             var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
             var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
@@ -81,7 +82,7 @@ namespace Shoryan.Controllers
 
             string StoredProcedureName = UsersProcedures.editUserDetails;
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
-            Parameters.Add("@userId", User_Details.id); 
+            Parameters.Add("@userId", userId); 
             Parameters.Add("@name", User_Details.name);
             Parameters.Add("@email", User_Details.email);
             Parameters.Add("@password", User_Details.password);
@@ -91,6 +92,7 @@ namespace Shoryan.Controllers
 
             return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
         }
+
 
         public JsonResult getUserPastOrders([FromBody] Dictionary<string, object> JSONinput)
         {
@@ -102,6 +104,8 @@ namespace Shoryan.Controllers
 
             return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
         }
+
+		[HttpGet("api/authenticateUser/")]
         public JsonResult authenticateUser([FromBody] Dictionary<string, object> JSONinput)
         {
             var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
@@ -115,13 +119,13 @@ namespace Shoryan.Controllers
             return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
         }
 
-        public JsonResult getUserDetails([FromBody] Dictionary<string, object> JSONinput)
+		[HttpGet("api/users/{userId}")]
+		public JsonResult getUserDetails(int userId)
         {
-            var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
-            var User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
             string StoredProcedureName = UsersProcedures.getUserDetails;
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
-            Parameters.Add("@userId", User_Details.id);
+
+            Parameters.Add("@userId", userId);
 
             return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
         }

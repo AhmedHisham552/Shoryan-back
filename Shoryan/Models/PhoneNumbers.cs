@@ -7,7 +7,7 @@ namespace Shoryan.Models
 {
     public class PhoneNumbers
     {
-        public int number { get; set; }
+        public List<string> numbers { get; set; }
         public int userId { get; set; }
     }
 }

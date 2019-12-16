@@ -13,5 +13,6 @@ namespace Shoryan.StoredProcedures
         public static string editUserDetails = "editUserDetails";
         public static string authenticateUser = "authenticateUser";
         public static string getUserDetails = "getUserDetails";
+        public static string addPhoneNumber = "addPhoneNumber";
     }
 }

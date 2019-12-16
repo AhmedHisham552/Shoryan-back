@@ -23,32 +23,109 @@ namespace Shoryan.Controllers
         {
             dbMan = new DBManager();
         }
+
+        private int AuxaddPhoneNumber(int id,string phoneNumber)
+        {
+            string StoredProcedureName = UsersProcedures.addPhoneNumber;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@userId", id);
+            Parameters.Add("@PhoneNumber", phoneNumber);
+            return dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+        }
+
+ /* {
+	User_Details:{
+		name:"tarek",
+		registrationDate:"2019-02-12",
+		email:"ahmed2344_2006319@yahoo.com",
+		address:"haram",
+		rating:3.5,
+		password:"shoma",
+		type:"Normal"
+	    },
+	    NormalUsers:{
+		    gender:"M"
+	    },
+	    PhoneNumbers:{
+		    numbers:["011108292952","011120892955","011102723829"]
+	    }
+    }*/
+
         [HttpPost("api/user")]
         public JsonResult addUser([FromBody] Dictionary<string,object> JSONinput)
         {
+            DataTable dt;
             var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
-            var NormalUsersJson= JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
-           // var CouriersJson= JsonConvert.SerializeObject(JSONinput["Couriers"], Newtonsoft.Json.Formatting.Indented);
-
-            var User_Details =JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
-            var NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
-            //var Couriers = JsonConvert.DeserializeObject<Couriers>(CouriersJson);
-
-            string StoredProcedureName = UsersProcedures.addUser;
-            Dictionary<string, object> Parameters = new Dictionary<string, object>();
-            Parameters.Add("@name", User_Details.name);
-            Parameters.Add("@registrationDate", User_Details.registrationDate);
-            Parameters.Add("@email", User_Details.email);
-            Parameters.Add("@address", User_Details.address);
-            Parameters.Add("@rating", User_Details.rating);
-            Parameters.Add("@password", User_Details.password);
-            Parameters.Add("@imgUrl", User_Details.imgUrl);
-            Parameters.Add("@type", User_Details.type);
-            Parameters.Add("@gender", NormalUsers.gender);
-            //Parameters.Add("@area", Couriers.area);
-            DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-            var id = dt.Rows[0][0];
-            
+            var User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
+            if (User_Details.type == "Normal")
+            {
+                var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
+                var PhoneNumbersJson = JsonConvert.SerializeObject(JSONinput["PhoneNumbers"], Newtonsoft.Json.Formatting.Indented);
+                var NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
+                var PhoneNumbers = JsonConvert.DeserializeObject<PhoneNumbers>(PhoneNumbersJson);
+                string StoredProcedureName = UsersProcedures.addUser;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@registrationDate", User_Details.registrationDate);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@rating", User_Details.rating);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                Parameters.Add("@type", User_Details.type);
+                Parameters.Add("@gender", NormalUsers.gender);
+                dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+                PhoneNumbers.userId = Convert.ToInt32(dt.Rows[0][0]);
+                for (int i = 0; i < PhoneNumbers.numbers.Count; i++)
+                {
+                    AuxaddPhoneNumber(PhoneNumbers.userId, PhoneNumbers.numbers[i]);
+                }
+            }
+            else if(User_Details.type == "Courier")
+            {
+                var CouriersJson= JsonConvert.SerializeObject(JSONinput["Couriers"], Newtonsoft.Json.Formatting.Indented);
+                var Couriers = JsonConvert.DeserializeObject<Couriers>(CouriersJson);
+                var PhoneNumbersJson = JsonConvert.SerializeObject(JSONinput["PhoneNumbers"], Newtonsoft.Json.Formatting.Indented);
+                var PhoneNumbers = JsonConvert.DeserializeObject<PhoneNumbers>(PhoneNumbersJson);
+                string StoredProcedureName = UsersProcedures.addUser;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@registrationDate", User_Details.registrationDate);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@rating", User_Details.rating);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                Parameters.Add("@type", User_Details.type);
+                Parameters.Add("@area", Couriers.area);
+                dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+                PhoneNumbers.userId = Convert.ToInt32(dt.Rows[0][0]);
+                for (int i = 0; i < PhoneNumbers.numbers.Count; i++)
+                {
+                    AuxaddPhoneNumber(PhoneNumbers.userId, PhoneNumbers.numbers[i]);
+                }
+            }
+            else
+            {
+                var PhoneNumbersJson = JsonConvert.SerializeObject(JSONinput["PhoneNumbers"], Newtonsoft.Json.Formatting.Indented);
+                var PhoneNumbers = JsonConvert.DeserializeObject<PhoneNumbers>(PhoneNumbersJson);
+                string StoredProcedureName = UsersProcedures.addUser;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@registrationDate", User_Details.registrationDate);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@rating", User_Details.rating);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                Parameters.Add("@type", User_Details.type);
+                dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+                PhoneNumbers.userId = Convert.ToInt32(dt.Rows[0][0]);
+                for (int i = 0; i < PhoneNumbers.numbers.Count; i++)
+                {
+                    AuxaddPhoneNumber(PhoneNumbers.userId, PhoneNumbers.numbers[i]);
+                }
+            }
             return Json(dt);
         }
         [HttpGet("api/user")]
@@ -71,28 +148,66 @@ namespace Shoryan.Controllers
         public JsonResult editUserDetails([FromBody] Dictionary<string, object> JSONinput)
         {
             var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
-            var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
-            var PharmaciesJson = JsonConvert.SerializeObject(JSONinput["Pharmacies"], Newtonsoft.Json.Formatting.Indented);
-            var CouriersJson = JsonConvert.SerializeObject(JSONinput["Couriers"], Newtonsoft.Json.Formatting.Indented);
-
             var User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
-            var NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
-            var Pharmacies = JsonConvert.DeserializeObject<Pharmacies>(PharmaciesJson);
-            var Couriers = JsonConvert.DeserializeObject<Couriers>(CouriersJson);
-
-            string StoredProcedureName = UsersProcedures.editUserDetails;
-            Dictionary<string, object> Parameters = new Dictionary<string, object>();
-            Parameters.Add("@userId", User_Details.id); 
-            Parameters.Add("@name", User_Details.name);
-            Parameters.Add("@email", User_Details.email);
-            Parameters.Add("@password", User_Details.password);
-            Parameters.Add("@address", User_Details.address);
-            Parameters.Add("@imgUrl", User_Details.imgUrl);
-            Parameters.Add("@area", Couriers.area);
-
-            return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+            if (User_Details.type == "Normal")
+            {
+                var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
+                var NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
+                string StoredProcedureName = UsersProcedures.editUserDetails;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@userId", User_Details.id);
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+            }
+            else if (User_Details.type == "Courier")
+            {
+                var CouriersJson = JsonConvert.SerializeObject(JSONinput["Couriers"], Newtonsoft.Json.Formatting.Indented);
+                var Couriers = JsonConvert.DeserializeObject<Couriers>(CouriersJson);
+                string StoredProcedureName = UsersProcedures.editUserDetails;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@userId", User_Details.id);
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                Parameters.Add("@area", Couriers.area);
+                return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+            }
+            else if (User_Details.type == "Admin")
+            {
+                var AdminsJson = JsonConvert.SerializeObject(JSONinput["Adminstartors"], Newtonsoft.Json.Formatting.Indented);
+                var Admins = JsonConvert.DeserializeObject<Adminstrators>(AdminsJson);
+                string StoredProcedureName = UsersProcedures.editUserDetails;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@userId", User_Details.id);
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+            }
+            else
+            {
+                var PharmaciesJson = JsonConvert.SerializeObject(JSONinput["Pharmacies"], Newtonsoft.Json.Formatting.Indented);
+                var Pharmacies = JsonConvert.DeserializeObject<Pharmacies>(PharmaciesJson);
+                string StoredProcedureName = UsersProcedures.editUserDetails;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@userId", User_Details.id);
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+            }
         }
-        [HttpPost("api/login")]
+        [HttpGet("api/login")]
         public JsonResult authenticateUser([FromBody] Dictionary<string, object> JSONinput)
         {
             var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);

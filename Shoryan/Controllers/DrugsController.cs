@@ -20,7 +20,7 @@ namespace Shoryan.Controllers
 			dbMan = new DBManager();
 		}
 
-		[HttpGet("api/getDrugsById")]
+		[HttpGet("api/getDrugsByIdd")]
 		public JsonResult getDrugById([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var DrugJson = JsonConvert.SerializeObject(JSONinput["Drugs"], Newtonsoft.Json.Formatting.Indented);

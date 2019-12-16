@@ -11,7 +11,6 @@ namespace Shoryan.StoredProcedures
         public static string getAllUsers = "getAllUsers";
         public static string deleteUser = "deleteUser";
         public static string editUserDetails = "editUserDetails";
-        public static string getPastOrders = "getPastOrdersByUser";
         public static string authenticateUser = "authenticateUser";
         public static string getUserDetails = "getUserDetails";
     }

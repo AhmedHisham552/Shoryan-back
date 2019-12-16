@@ -10,5 +10,8 @@ namespace Shoryan.Models
         public int id { get; set; }
         public string name { get; set; }
         public int officialPrice { get; set; }
+		public List<string> imgsUrls { get; set; }
+		public List<int> categoriesIds { get; set; }
+		public List<string> effectiveSubstances { get; set; }
     }
 }

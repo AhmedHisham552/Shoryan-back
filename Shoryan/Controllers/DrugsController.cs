@@ -294,7 +294,64 @@ namespace Shoryan.Controllers
 			return Json(null);
 		}
 
-		
+		[HttpDelete("api/drugFromCategory/{drugId}/{categoryId}")]
+		public JsonResult deleteDrugFromCategory(int drugId, int categoryId)
+		{
+			string StoredProcedureName = DrugsProcedures.deleteDrugFromCategory;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@drug_id", drugId);
+			Parameters.Add("@category_id", categoryId);
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+		[HttpDelete("api/effectiveSubstance/{drugId}/{effectiveSubstanceName}")]
+		public JsonResult deleteEffectiveSubstance(int drugId,string effectiveSubstanceName)
+		{
+			string StoredProcedureName = DrugsProcedures.deleteEffectiveSubstance;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@drug_id", drugId);
+			Parameters.Add("@name", effectiveSubstanceName);
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+		[HttpDelete("api/drugImgUrl/{drugId}/{imgNo}")]
+		public JsonResult deleteDrugImgUrl(int drugId, int imgNo)
+		{
+			string StoredProcedureName = DrugsProcedures.deleteDrugImg;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@drug_id", drugId);
+			Parameters.Add("@img_no", imgNo);
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+		[HttpDelete("api/drugs/{drugId}")]
+		public JsonResult deleteDrug(int drugId)
+		{
+			var DrugJson = JsonConvert.SerializeObject(getDrugById(drugId).Value, Newtonsoft.Json.Formatting.Indented);
+			var Drug = JsonConvert.DeserializeObject<Drugs>(DrugJson);
+
+
+			foreach (var x in Drug.effectiveSubstances)
+			{
+				deleteEffectiveSubstance(Drug.id, x);
+			}
+
+			foreach(var x in Drug.categoriesIds)
+			{
+				deleteDrugFromCategory(drugId, x);
+			}
+
+			int i = 1;
+			foreach (var x in Drug.imgsUrls)
+			{
+				deleteDrugImgUrl(drugId, i++);
+			}
+
+			string StoredProcedureName = DrugsProcedures.deleteDrug;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@id", drugId);
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
 
 	}
 }

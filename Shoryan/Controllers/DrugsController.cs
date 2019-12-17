@@ -159,6 +159,29 @@ namespace Shoryan.Controllers
 			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
 		}
 
+		[HttpGet("api/drugsByName/{drugName}")]
+		public JsonResult getDrugsByName(string drugName)
+		{
+			string StoredProcedureName = DrugsProcedures.getDrugsByName;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+			Parameters.Add("@name", drugName);
+
+			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			if (dt == null)
+				return Json(null);
+
+			List<Drugs> drugList = new List<Drugs>();
+
+			for (int i = 0;i<dt.Rows.Count;i++)
+			{
+				var DrugsJson = JsonConvert.SerializeObject(getDrugById(Convert.ToInt32(dt.Rows[0][0])).Value, Newtonsoft.Json.Formatting.Indented);
+				var Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+				drugList.Add(Drug);
+			}
+			return Json(drugList);
+		}
+
 		[HttpGet("api/drugImg/{drugId}")]
 		public JsonResult getAllDrugImgs(int drugId)
 		{

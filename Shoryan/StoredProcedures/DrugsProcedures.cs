@@ -11,6 +11,7 @@ namespace DBapplication
 		public static string getDrug = "getDrug";
 		public static string getAllDrugsIds = "getAllDrugsIds";
 		public static string getDrugsByCategory = "getDrugsByCategory";
+		public static string getDrugsByName = "getDrugByName";
 		public static string getDrugImgs = "getDrugImgs";
 		public static string getEffectiveSubstances = "getEffectiveSubstances";
 		public static string getCategoryOfDrug = "getCategoryOfDrug";

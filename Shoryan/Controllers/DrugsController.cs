@@ -353,16 +353,5 @@ namespace Shoryan.Controllers
 			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 
-		[HttpGet("api/testapi/{drugId}")]
-		public JsonResult asdasd(int drugId)
-		{
-			var DrugJson = JsonConvert.SerializeObject(getDrugById(drugId).Value, Newtonsoft.Json.Formatting.Indented);
-			var Drug = JsonConvert.DeserializeObject<Drugs>(DrugJson);
-
-
-
-			return Json(Drug);	
-		}
-
 	}
 }

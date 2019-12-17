@@ -1,55 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using DBapplication;
-using Shoryan.Models;
-using Shoryan.Routes;
-using Newtonsoft.Json;
-using System.Data;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Mvc;
+//using DBapplication;
+//using Shoryan.Models;
+//using Shoryan.Routes;
+//using Newtonsoft.Json;
+//using System.Data;
 
-namespace Shoryan.Controllers
-{
-    
-    [ApiController]
-    public class OrdersController : Controller
-    {
-		DBManager dbMan;
+//namespace Shoryan.Controllers
+//{
 
-		public OrdersController()
-		{
-			dbMan = new DBManager();
-		}
+//	[ApiController]
+//	public class OrdersController : Controller
+//	{
+//		DBManager dbMan;
 
-        [HttpPost("api/Order")]
-        public IActionResult addOrder([FromBody] Dictionary<string, object> JSONinput)
-        {
-            var orderJson = JsonConvert.SerializeObject(JSONinput["Order"], Newtonsoft.Json.Formatting.Indented);
-            var order = JsonConvert.DeserializeObject<Orders>(orderJson);
+//		public OrdersController()
+//		{
+//			dbMan = new DBManager();
+//		}
 
-
-            Object[] array = new Object[ order.Items.Count ];
-
-            foreach (var item in order.Items) {
-                for (int runs = 0; runs < order.Items.Count; runs++)
-                {
-                    array[runs] = order.Items[runs];
-                }
-            }
-            string StoredProcedureName = ListingsProcedures.addListing;
-
-            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+//		[HttpPost("api/Order")]
+//		public IActionResult addOrder([FromBody] Dictionary<string, object> JSONinput)
+//		{
+//			var orderJson = JsonConvert.SerializeObject(JSONinput["Order"], Newtonsoft.Json.Formatting.Indented);
+//			var order = JsonConvert.DeserializeObject<Orders>(orderJson);
 
 
-            int returnValue = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+//			Object[] array = new Object[order.Items.Count];
 
-            //if (returnValue == 0) return StatusCode(500);
-            //return Json(new { test = "test"});
-            return Json(array);
+//			foreach (var item in order.Items)
+//			{
+//				for (int runs = 0; runs < order.Items.Count; runs++)
+//				{
+//					array[runs] = order.Items[runs];
+//				}
+//			}
+//			string StoredProcedureName = ListingsProcedures.addListing;
 
-        }
+//			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
-    }
-}
+
+//			int returnValue = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+
+//			//if (returnValue == 0) return StatusCode(500);
+//			//return Json(new { test = "test"});
+//			return Json(array);
+
+//		}
+
+//	}
+//}

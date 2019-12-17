@@ -10,6 +10,6 @@ namespace DBapplication
 		public static string addAdministrator = "addAdministrator";
 		public static string removeAdministrator = "removeAdministrator";
 		public static string updateAdministrator = "updateAdministrator";
-		public static string getAdministrators = "getAllAdministrators";
+		public static string getAdministrator = "getAdministrator";
 	}
 }

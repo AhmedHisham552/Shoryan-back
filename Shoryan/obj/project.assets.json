@@ -12731,19 +12731,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Youssef\\.nuget\\packages\\": {}
+    "C:\\Users\\nasser\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\CMP_2A\\Database_Systems\\Project\\Shoryan\\Shoryan-back\\Shoryan\\Shoryan.csproj",
+      "projectUniqueName": "C:\\Users\\nasser\\Desktop\\Projects\\Shoryan-back\\Shoryan\\Shoryan.csproj",
       "projectName": "Shoryan",
-      "projectPath": "D:\\CMP_2A\\Database_Systems\\Project\\Shoryan\\Shoryan-back\\Shoryan\\Shoryan.csproj",
-      "packagesPath": "C:\\Users\\Youssef\\.nuget\\packages\\",
-      "outputPath": "D:\\CMP_2A\\Database_Systems\\Project\\Shoryan\\Shoryan-back\\Shoryan\\obj\\",
+      "projectPath": "C:\\Users\\nasser\\Desktop\\Projects\\Shoryan-back\\Shoryan\\Shoryan.csproj",
+      "packagesPath": "C:\\Users\\nasser\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\nasser\\Desktop\\Projects\\Shoryan-back\\Shoryan\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Youssef\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\nasser\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

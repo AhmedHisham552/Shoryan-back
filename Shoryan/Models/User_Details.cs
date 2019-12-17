@@ -16,5 +16,6 @@ namespace Shoryan.Models
         public string password { get; set; }
         public string imgUrl { get; set; }
         public string type { get; set; }
+        public List<string> phoneNumbers { get; set; }
     }
 }

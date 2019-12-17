@@ -17,7 +17,9 @@ namespace Shoryan.Models
         public string userReviewText { get; set; }
         public int userId { get; set; }
         public string courierReviewText { get; set; }
+        public string state { get; set; }
         public float courierReviewRating { get; set; }
         public int courierId { get; set; }
+        public List<int> listingsIds { get; set; }
     }
 }

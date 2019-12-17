@@ -23,13 +23,14 @@ namespace Shoryan.Controllers
 
 		private List<int> aux_getAllDrugsIds()
 		{
-			string StoredProcedureName = DrugsProcedures.getDrug;
+			string StoredProcedureName = DrugsProcedures.getAllDrugsIds;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			
 			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 			List<int> DrugsIds = new List<int>();
-			for (int i = 0; i < dt.Rows.Count; i++)
-				DrugsIds.Add(Convert.ToInt32(dt.Rows[i]["drugsIds"]));
+			if(dt!=null)
+				for (int i = 0; i < dt.Rows.Count; i++)
+					DrugsIds.Add(Convert.ToInt32(dt.Rows[i]["drugsIds"]));
 
 			return DrugsIds;
 		}
@@ -44,10 +45,11 @@ namespace Shoryan.Controllers
 			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 
 			List<string> DrugImgsUrls = new List<string>();
-			for(int i=0;i<dt.Rows.Count;i++)
-			{
-				DrugImgsUrls.Add(Convert.ToString(dt.Rows[i]["imgsUrls"]));
-			}
+			if(dt != null)
+				for(int i=0;i<dt.Rows.Count;i++)
+				{
+					DrugImgsUrls.Add(Convert.ToString(dt.Rows[i]["imgsUrls"]));
+				}
 
 			return DrugImgsUrls;
 		}
@@ -56,15 +58,16 @@ namespace Shoryan.Controllers
 		{
 			string StoredProcedureName = DrugsProcedures.getEffectiveSubstances;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
-
-			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 			Parameters.Add("@drug_id", drugId);
+			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
 
 			List<string> DrugEffectiveSubstances = new List<string>();
-			for (int i = 0; i < dt.Rows.Count; i++)
-			{
-				DrugEffectiveSubstances.Add(Convert.ToString(dt.Rows[i]["effectiveSubstanceName"]));
-			}
+			if(dt!= null)
+				for (int i = 0; i < dt.Rows.Count; i++)
+				{
+					DrugEffectiveSubstances.Add(Convert.ToString(dt.Rows[i]["effectiveSubstanceName"]));
+				}
 
 			return DrugEffectiveSubstances;
 		}
@@ -80,10 +83,11 @@ namespace Shoryan.Controllers
 
 
 			List<int> DrugCategories = new List<int>();
-			for (int i = 0; i < dt.Rows.Count; i++)
-			{
-				DrugCategories.Add(Convert.ToInt32(dt.Rows[i]["categoriesIds"]));
-			}
+			if(dt!=null)
+				for (int i = 0; i < dt.Rows.Count; i++)
+				{
+					DrugCategories.Add(Convert.ToInt32(dt.Rows[i]["categoriesIds"]));
+				}
 
 			return DrugCategories;
 		}
@@ -101,10 +105,15 @@ namespace Shoryan.Controllers
 		[HttpGet("api/drugs/")]
 		public JsonResult getAllDrugs()
 		{
-			string StoredProcedureName = DrugsProcedures.getDrug;
-			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			List<int> ids = aux_getAllDrugsIds();
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			List<JsonResult> totalJson = new List<JsonResult>();
+			foreach(var id in ids)
+			{
+				totalJson.Add(getDrugById(id));
+			}
+
+			return Json(totalJson);
 		}
 
 
@@ -117,8 +126,15 @@ namespace Shoryan.Controllers
 
 			Parameters.Add("@id", drugId);
 
-			var DrugJson = JsonConvert.SerializeObject(Json(dbMan.ExecuteReader(StoredProcedureName, Parameters)), Newtonsoft.Json.Formatting.Indented);
-			var Drug = JsonConvert.DeserializeObject<Drugs>(DrugJson);
+			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			var Drug = new Drugs();
+			if (dt != null)
+			{
+				Drug.id = drugId;
+				Drug.name = Convert.ToString(dt.Rows[0]["name"]);
+				Drug.officialPrice = Convert.ToInt32(dt.Rows[0]["officialPrice"]);
+			}
+
 
 			List<string> imgsUrls = aux_getImgsFromDrug(drugId);
 			List<string> effectiveSubstances = aux_getEffectiveSubstancesFromDrug(drugId);
@@ -177,36 +193,163 @@ namespace Shoryan.Controllers
 			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
 		}
 
-		/*
-		 JSON:
-		 {
-			drugs:
-			{
-				id:
-				name:
-				officialPrice:
-				urls: ["url1", "url2", "url3", ..]
-				categories: [cat1_id, cat2_id, cat3_id, ..]
-				effectivesSubstances: ["name1", "name2", "name3"]
-			}
-		 }
-		*/
+		[HttpPost("api/drugImg/")]
+		public JsonResult addDrugImg([FromBody] Dictionary<string, object> JSONinput)
+		{
+			var DrugsImgsJson = JsonConvert.SerializeObject(JSONinput["DrugsImgsUrls"], Newtonsoft.Json.Formatting.Indented);
+			var DrugImgs = JsonConvert.DeserializeObject<DrugsImgsUrls>(DrugsImgsJson);
 
-		[HttpPost("api/drug/")]
+			string StoredProcedureName = DrugsProcedures.addDrugImg;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+			Parameters.Add("@drug_id", DrugImgs.drugId);
+			Parameters.Add("@img_no", DrugImgs.imgNo);
+			Parameters.Add("@url", DrugImgs.url);
+
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+		[HttpPost("api/drugCategory/")]
+		public JsonResult addDrugToCategory([FromBody] Dictionary<string, object> JSONinput)
+		{
+			var DrugsCategoriesJson = JsonConvert.SerializeObject(JSONinput["DrugsInCategory"], Newtonsoft.Json.Formatting.Indented);
+			var DrugsCategories = JsonConvert.DeserializeObject<DrugsInCategory>(DrugsCategoriesJson);
+
+			string StoredProcedureName = DrugsProcedures.addDrugToCategory;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+			Parameters.Add("@drug_id", DrugsCategories.drugId);
+			Parameters.Add("@category_id", DrugsCategories.categoryId);
+
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+		[HttpPost("api/drugEffectiveSubstance/")]
+		public JsonResult addEffectiveSubstanceToDrug([FromBody] Dictionary<string, object> JSONinput)
+		{
+			var DrugsEffectiveSubstanceJson = JsonConvert.SerializeObject(JSONinput["EffectiveSubstances"], Newtonsoft.Json.Formatting.Indented);
+			var DrugsEffectiveSubstance = JsonConvert.DeserializeObject<EffectiveSubstances>(DrugsEffectiveSubstanceJson);
+
+			string StoredProcedureName = DrugsProcedures.addEffectiveSubstanceToDrug;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+			Parameters.Add("@drugId", DrugsEffectiveSubstance.drugId);
+			Parameters.Add("@name", DrugsEffectiveSubstance.name);
+
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+
+		[HttpPost("api/drugs/")]
 		public JsonResult addDrug([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var DrugsJson = JsonConvert.SerializeObject(JSONinput["Drugs"], Newtonsoft.Json.Formatting.Indented);
 			var Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
 
-			string StoredProcedureName = AdministratorsProcedures.addAdministrator;
+			string StoredProcedureName = DrugsProcedures.addDrug;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
-			Parameters.Add("@drugs", Drug.name);
-			Parameters.Add("@email", userDetails.email);
-			Parameters.Add("@address", userDetails.address);
-			Parameters.Add("@password", userDetails.password);
-			Parameters.Add("@imgUrl", userDetails.imgUrl);
+			Parameters.Add("@name", Drug.name);
+			Parameters.Add("@officialPrice", Drug.officialPrice);
 
+			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			Drug.id = Convert.ToInt32(dt.Rows[0][0]);
+			int i = 1;
+			foreach (var drugImgUrl in Drug.imgsUrls)
+			{
+				var x = new DrugsImgsUrls();
+				x.drugId = Drug.id;
+				x.imgNo = i++;
+				x.url = drugImgUrl;
+
+				Dictionary<string, object> DrugsImgsUrlsParameters = new Dictionary<string, object>();
+				DrugsImgsUrlsParameters.Add("DrugsImgsUrls", x);
+				addDrugImg(DrugsImgsUrlsParameters);
+			}
+
+
+			foreach (var effectiveSubstance in Drug.effectiveSubstances)
+			{
+				var x = new EffectiveSubstances();
+				x.drugId = Drug.id;
+				x.name = effectiveSubstance;
+
+				Dictionary<string, object> EffectiveSubstancesParameters = new Dictionary<string, object>();
+				EffectiveSubstancesParameters.Add("EffectiveSubstances", x);
+				addEffectiveSubstanceToDrug(EffectiveSubstancesParameters);
+			}
+
+
+			foreach (var DrugsInCategory in Drug.categoriesIds)
+			{
+				var x = new DrugsInCategory();
+				x.drugId = Drug.id;
+				x.categoryId = DrugsInCategory;
+
+				Dictionary<string, object> DrugsInCategoryParameters = new Dictionary<string, object>();
+				DrugsInCategoryParameters.Add("DrugsInCategory", x);
+				addDrugToCategory(DrugsInCategoryParameters);
+			}
+
+			return Json(null);
+		}
+
+		[HttpDelete("api/drugFromCategory/{drugId}/{categoryId}")]
+		public JsonResult deleteDrugFromCategory(int drugId, int categoryId)
+		{
+			string StoredProcedureName = DrugsProcedures.deleteDrugFromCategory;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@drug_id", drugId);
+			Parameters.Add("@category_id", categoryId);
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+		[HttpDelete("api/effectiveSubstance/{drugId}/{effectiveSubstanceName}")]
+		public JsonResult deleteEffectiveSubstance(int drugId,string effectiveSubstanceName)
+		{
+			string StoredProcedureName = DrugsProcedures.deleteEffectiveSubstance;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@drug_id", drugId);
+			Parameters.Add("@name", effectiveSubstanceName);
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+		[HttpDelete("api/drugImgUrl/{drugId}/{imgNo}")]
+		public JsonResult deleteDrugImgUrl(int drugId, int imgNo)
+		{
+			string StoredProcedureName = DrugsProcedures.deleteDrugImg;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@drug_id", drugId);
+			Parameters.Add("@img_no", imgNo);
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
+		[HttpDelete("api/drugs/{drugId}")]
+		public JsonResult deleteDrug(int drugId)
+		{
+			var DrugJson = JsonConvert.SerializeObject(getDrugById(drugId).Value, Newtonsoft.Json.Formatting.Indented);
+			var Drug = JsonConvert.DeserializeObject<Drugs>(DrugJson);
+
+
+			foreach (var x in Drug.effectiveSubstances)
+			{
+				deleteEffectiveSubstance(Drug.id, x);
+			}
+
+			foreach(var x in Drug.categoriesIds)
+			{
+				deleteDrugFromCategory(drugId, x);
+			}
+
+			int i = 1;
+			foreach (var x in Drug.imgsUrls)
+			{
+				deleteDrugImgUrl(drugId, i++);
+			}
+
+			string StoredProcedureName = DrugsProcedures.deleteDrug;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@id", drugId);
 			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 

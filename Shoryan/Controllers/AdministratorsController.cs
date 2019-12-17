@@ -60,12 +60,12 @@ namespace Shoryan.Controllers
 			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 
-		[HttpPut("api/administrators/{adminId}")]
-		public JsonResult updateAdministrator(int adminId, [FromBody] Dictionary<string, object> JSONinput)
-		{
-			var userCont = new UsersController();
-			return (userCont.editUserDetails(adminId, JSONinput));
-		}
+		//[HttpPut("api/administrators/{adminId}")]
+		//public JsonResult updateAdministrator(int adminId, [FromBody] Dictionary<string, object> JSONinput)
+		//{
+		//	var userCont = new UsersController();
+		//	return (userCont.editUserDetails(adminId, JSONinput));
+		//}
 
 		[HttpDelete("api/administrators/{adminId}")]
 		public JsonResult removeAdministrator(int adminId)

@@ -11,15 +11,37 @@ using Newtonsoft.Json;
 
 namespace Shoryan.Controllers
 {
-    
-    [ApiController]
-    public class GiftCardsController : Controller
-    {
+
+	[ApiController]
+	public class GiftCardsController : Controller
+	{
 		DBManager dbMan;
 
 		public GiftCardsController()
 		{
 			dbMan = new DBManager();
+		}
+
+		[HttpGet("api/GiftCards")]
+		public JsonResult getGiftCards()
+		{
+			string StoredProcedureName = GiftCardsProcedures.getGiftCards;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+
+		}
+
+		[HttpGet("api/GiftCards/{userId}")]
+		public JsonResult getGiftCardsByUserId(int userId)
+		{
+			string StoredProcedureName = GiftCardsProcedures.getGiftCards;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+			Parameters.Add("@userId", userId);
+
+			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+
 		}
 
 		[HttpPost("api/GiftCards")]
@@ -37,32 +59,26 @@ namespace Shoryan.Controllers
 
 		}
 
-		[HttpPost("api/GiftCards")]
-		public JsonResult redeemGiftCard( [FromBody] Dictionary<string, object> JSONinput)
+		[HttpPut("api/GiftCards/{code}/{claimingUserId}")]
+		public JsonResult redeemGiftCard(string code, int claimingUserId )
 		{
-			var giftCardsJson = JsonConvert.SerializeObject(JSONinput["GiftCards"], Newtonsoft.Json.Formatting.Indented);
-			var giftCard = JsonConvert.DeserializeObject<GiftCards>(giftCardsJson);
-
-			var normalUserJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
-			var normalUser = JsonConvert.DeserializeObject<GiftCards>(normalUserJson);
-
 			string StoredProcedureName = GiftCardsProcedures.redeemGiftCard;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
-			Parameters.Add("@code", giftCard.code);
-			Parameters.Add("@claimingUserId", normalUser.id);
+			Parameters.Add("@code", code);
+			Parameters.Add("@claimingUserId", claimingUserId);
 
 			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 
-		[HttpPost("api/addGiftsCards")]
-		public JsonResult getGiftCards([FromBody] Dictionary<string, object> JSONinput)
+		[HttpDelete("api/GiftCards/{id}")]
+		public JsonResult deleteGiftCard(int id)
 		{
-			var giftCardsJson = JsonConvert.SerializeObject(JSONinput["giftCards"], Newtonsoft.Json.Formatting.Indented);
-			var giftCard = JsonConvert.DeserializeObject<GiftCards>(giftCardsJson);
-
-			string StoredProcedureName = GiftCardsProcedures.getGiftCards;
+			string StoredProcedureName = GiftCardsProcedures.deleteGiftCard;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+
+			Parameters.Add("@id", id);
+
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 
 	}

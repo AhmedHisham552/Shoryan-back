@@ -13,6 +13,7 @@ namespace Shoryan.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSwaggerGen(x =>

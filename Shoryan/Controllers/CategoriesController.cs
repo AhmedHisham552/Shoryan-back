@@ -30,5 +30,29 @@ namespace Shoryan.Controllers
 			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
 		}
 
+		[HttpPost("api/categories")]
+		public JsonResult addCategory([FromBody] Dictionary<string, object> JSONinput)
+		{
+			var CategoriesJson = JsonConvert.SerializeObject(JSONinput["Categories"], Newtonsoft.Json.Formatting.Indented);
+			var Category = JsonConvert.DeserializeObject<Categories>(CategoriesJson);
+
+			string StoredProcedureName = CategoriesProcedures.addCategory;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@name", Category.name);
+
+			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+		}
+
+		[HttpDelete("api/categories/{categoryId}")]
+		public JsonResult deleteCategory(int categoryId)
+		{
+			string StoredProcedureName = CategoriesProcedures.deleteCategory;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+			Parameters.Add("@id", categoryId);
+
+			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+		}
+
 	}
 }

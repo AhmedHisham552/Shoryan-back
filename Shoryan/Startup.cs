@@ -30,6 +30,7 @@ namespace Shoryan
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             var installers = typeof(Startup).Assembly.ExportedTypes.Where(x => typeof(Installer).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract).Select(Activator.CreateInstance).Cast<Installer>().ToList();
 
             installers.ForEach(installer => installer.InstallServices(services, Configuration));
@@ -63,6 +64,12 @@ namespace Shoryan
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
 
             app.UseMvc();
         }

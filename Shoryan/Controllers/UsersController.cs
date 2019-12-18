@@ -213,8 +213,8 @@ namespace Shoryan.Controllers
 				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 			}
 		}
-		[HttpGet("api/login")]
-		public JsonResult authenticateUser([FromBody] Dictionary<string, object> JSONinput)
+		[HttpPost("api/login")]
+		public IActionResult authenticateUser([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
 			var User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
@@ -226,7 +226,7 @@ namespace Shoryan.Controllers
 			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 			if (dt == null)
 			{
-				return Json("Email doesn't exist");
+				return StatusCode(404,"Email doesn't exist");
 			}
 			else
 			{
@@ -236,8 +236,8 @@ namespace Shoryan.Controllers
 				}
 				else
 				{
-					return Json("Password incorrect");
-				}
+					return StatusCode(500, "Password is incorrect");
+                }
 			}
 			
 		}

@@ -24,7 +24,33 @@ namespace Shoryan.Controllers
 			dbMan = new DBManager();
 		}
 
-		[HttpPost("api/userPhoneNumber/{userId}/{phoneNumber}")]
+        [HttpPost("api/deletePhoneNumber/{userId}/{phoneNumber}")]
+        public IActionResult deletePhoneNumber(int userId, string phoneNumber)
+        {
+            string StoredProcedureName = UsersProcedures.deletePhoneNumber;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@userId", userId);
+            Parameters.Add("@PhoneNumber", phoneNumber);
+            try
+            {
+                int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+                if (returnCode == -1)
+                {
+                    return StatusCode(200, "Phone Number deleted successfully");
+                }
+                else
+                {
+                    return StatusCode(500, "Phone Number doesn't exist");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, "Phone Number doesn't exist");
+            }
+
+        }
+
+        [HttpPost("api/userPhoneNumber/{userId}/{phoneNumber}")]
 		public IActionResult addPhoneNumber(int userId,string phoneNumber)
 		{
 			string StoredProcedureName = UsersProcedures.addPhoneNumber;

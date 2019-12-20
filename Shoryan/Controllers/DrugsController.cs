@@ -503,7 +503,7 @@ namespace Shoryan.Controllers
 			Parameters.Add("@id", drugId);
 			try
 			{
-				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
 				if(returnCode == -1)
 				{
 					return StatusCode(200, "Drug deleted successfully");

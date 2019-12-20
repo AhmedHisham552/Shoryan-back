@@ -78,7 +78,7 @@ namespace Shoryan.Controllers
 				Parameters.Add("@name", User_Details.name);
 				Parameters.Add("@email", User_Details.email);
 				Parameters.Add("@address", User_Details.address);
-                Parameters.Add("@password", User_Details.password);
+				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);
 				Parameters.Add("@gender", NormalUsers.gender);
@@ -96,10 +96,8 @@ namespace Shoryan.Controllers
 				string StoredProcedureName = UsersProcedures.addUser;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@name", User_Details.name);
-				Parameters.Add("@registrationDate", User_Details.registrationDate);
 				Parameters.Add("@email", User_Details.email);
 				Parameters.Add("@address", User_Details.address);
-				Parameters.Add("@rating", User_Details.rating);
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);
@@ -116,10 +114,8 @@ namespace Shoryan.Controllers
 				string StoredProcedureName = UsersProcedures.addUser;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@name", User_Details.name);
-				Parameters.Add("@registrationDate", User_Details.registrationDate);
 				Parameters.Add("@email", User_Details.email);
 				Parameters.Add("@address", User_Details.address);
-				Parameters.Add("@rating", User_Details.rating);
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);
@@ -298,14 +294,6 @@ namespace Shoryan.Controllers
 			}
 
 		}
-        [HttpGet("api/ActiveListings/{userId}")]
-        public JsonResult getUserActiveListings(int userId)
-        {
-            string StoredProcedureName = UsersProcedures.getActiveListings;
-            Dictionary<string, object> Parameters = new Dictionary<string, object>();
-            Parameters.Add("@userId", userId);
-            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
-        }
-    }
+	}
 
 }

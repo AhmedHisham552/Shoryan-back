@@ -48,9 +48,18 @@ namespace Shoryan.Controllers
             Parameters.Add("@ListingId", listingId);
 
             DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-
             if (dt == null) return StatusCode(404);
-            return Json(dt);
+
+			Listings listing = new Listings();
+			listing.id = Convert.ToInt32(dt.Rows[0]["id"]);
+			listing.expirationDate = Convert.ToDateTime(dt.Rows[0]["expirationDate"]);
+			listing.price = Convert.ToInt32(dt.Rows[0]["price"]);
+			listing.shreets = Convert.ToInt32(dt.Rows[0]["shreets"]);
+			listing.elbas = Convert.ToInt32(dt.Rows[0]["elbas"]);
+			listing.userId = Convert.ToInt32(dt.Rows[0]["userId"]);
+			listing.drugId = Convert.ToInt32(dt.Rows[0]["drugId"]);
+
+			return Json(listing);
 
         }
 

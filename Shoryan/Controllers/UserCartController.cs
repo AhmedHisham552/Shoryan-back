@@ -32,7 +32,10 @@ namespace Shoryan.Models
 			Parameters.Add("@user_id", userId);
 
 			var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-
+			if(dt == null)
+			{
+				return Json(null);
+			}
 			List<UserCart> UserCarts = new List<UserCart>();
 
 			for (int i = 0; i < dt.Rows.Count; i++)

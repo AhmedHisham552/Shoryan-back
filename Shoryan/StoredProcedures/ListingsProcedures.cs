@@ -10,6 +10,7 @@ namespace DBapplication
 		public static string addListing = "addListing";
         public static string getAllListing = "getAllListings";
         public static string getListingById = "getListingById";
+        public static string getListingsInOrder = "getListingsInOrder";
 
     }
 }

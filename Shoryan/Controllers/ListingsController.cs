@@ -87,5 +87,18 @@ namespace Shoryan.Controllers
 
 		}
 
-	}
+        [HttpGet("api/ListingsInOrder/{orderId}")]
+        public IActionResult getListingsInOrder(int orderId)
+        {
+
+            string StoredProcedureName = ListingsProcedures.getListingsInOrder;
+
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@orderId", orderId);
+
+            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+
+        }
+
+    }
 }

@@ -23,44 +23,34 @@ namespace Shoryan.Models
 			dbMan = new DBManager();
 		}
 
-		private List<int> aux_getListingIdsInCart(int userId)
+
+		[HttpGet("api/userCart/{userId}")]
+		public JsonResult getCartItems(int userId)
 		{
 			string StoredProcedureName = UserCartProcedures.getCartItems;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@user_id", userId);
 
-			List<int> ListingsIds = new List<int>();
+			var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 
-			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-			if (dt != null)
+			List<UserCart> UserCarts = new List<UserCart>();
+
+			for (int i = 0; i < dt.Rows.Count; i++)
 			{
-				for (int i = 0; i < dt.Rows.Count; i++)
-				{
-					ListingsIds.Add(Convert.ToInt32(dt.Rows[i][0]));
-				}
+				var Cart = new UserCart();
+				Cart.drugId = Convert.ToInt32(dt.Rows[i]["drugId"]);
+				Cart.drugName = Convert.ToString(dt.Rows[i]["drugName"]);
+				Cart.sellerId = Convert.ToInt32(dt.Rows[i]["sellerId"]);
+				Cart.sellerName = Convert.ToString(dt.Rows[i]["sellerName"]);
+				Cart.shreets = Convert.ToInt32(dt.Rows[i]["shreets"]);
+				Cart.elbas = Convert.ToInt32(dt.Rows[i]["elbas"]);
+				Cart.price = Convert.ToInt32(dt.Rows[i]["price"]);
+
+				UserCarts.Add(Cart);
 			}
-
-			return ListingsIds;
-		}
-
-		[HttpGet("api/userCart/{userId}")]
-		public JsonResult getListingsInCart(int userId)
-		{
-			List<int> ListingsIds = aux_getListingIdsInCart(userId);
-			var listingsController = new ListingsController();
-			List<Listings> Listings = new List<Listings>();
 			
-			for(int i=0;i < ListingsIds.Count;i++)
-			{
-				var listingControllerJson = (JsonResult)listingsController.getListingById(ListingsIds[i]);
-				
-				var listingJson = JsonConvert.SerializeObject(listingControllerJson.Value, Newtonsoft.Json.Formatting.Indented);
-				var listing = JsonConvert.DeserializeObject<Listings>(listingJson);
 
-				Listings.Add(listing);
-			}
-
-			return Json(Listings);
+			return Json(UserCarts);
 		}
 
 		[HttpPost("api/userCart/{userId}/{listingId}")]

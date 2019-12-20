@@ -10,6 +10,7 @@ namespace DBapplication
 		public static string getCartItems = "getCartItems";
 		public static string addCartItem = "addCartItem";
 		public static string deleteCartItem = "deleteCartItem";
+		public static string emptyUserCart = "emptyUserCart";
 
 	}
 }

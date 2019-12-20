@@ -30,7 +30,6 @@ namespace Shoryan.Controllers
 
             DataTable dt = dbMan.ExecuteReader(ComplaintsProcedure.getAllComplaints, Parameters);
 
-            if (dt == null) return StatusCode(404);
             return Json(dt);
         }
 

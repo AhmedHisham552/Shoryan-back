@@ -40,18 +40,31 @@ namespace Shoryan.Controllers
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@name", Category.name);
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 
 		[HttpDelete("api/categories/{categoryId}")]
-		public JsonResult deleteCategory(int categoryId)
+		public IActionResult deleteCategory(int categoryId)
 		{
 			string StoredProcedureName = CategoriesProcedures.deleteCategory;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
 			Parameters.Add("@id", categoryId);
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+
+			if(returnCode == -1)
+			{
+				return StatusCode(200, "Category deleted successfully");
+			}
+			else if(returnCode == 0)
+			{
+				return StatusCode(404, "Email doesn't exist");
+			}
+			else
+			{
+				return StatusCode(404, "Unknown Error");
+			}
 		}
 
 	}

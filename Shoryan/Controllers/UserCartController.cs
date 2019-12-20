@@ -79,5 +79,15 @@ namespace Shoryan.Models
 			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 
+		[HttpDelete("api/emptyCart/{userId}")]
+		public JsonResult emptyUserCart(int userId)
+		{
+			string StoredProcedureName = UserCartProcedures.emptyUserCart;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@user_id", userId);
+
+			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+		}
+
 	}
 }

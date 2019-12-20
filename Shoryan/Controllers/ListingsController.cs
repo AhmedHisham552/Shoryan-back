@@ -66,7 +66,7 @@ namespace Shoryan.Controllers
         [HttpPost("api/Listings")]
 		public IActionResult addListings([FromBody] Dictionary<string, object> JSONinput)
 		{
-            var listingsJson = JsonConvert.SerializeObject(JSONinput["Listings"], Newtonsoft.Json.Formatting.Indented);
+            var listingsJson = JsonConvert.SerializeObject(JSONinput, Newtonsoft.Json.Formatting.Indented);
             var listing = JsonConvert.DeserializeObject<Listings>(listingsJson);
 
 

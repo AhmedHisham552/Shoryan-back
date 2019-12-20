@@ -32,7 +32,10 @@ namespace Shoryan.Models
 			Parameters.Add("@user_id", userId);
 
 			var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-
+			if(dt == null)
+			{
+				return Json(null);
+			}
 			List<UserCart> UserCarts = new List<UserCart>();
 
 			for (int i = 0; i < dt.Rows.Count; i++)
@@ -42,6 +45,7 @@ namespace Shoryan.Models
 				Cart.drugName = Convert.ToString(dt.Rows[i]["drugName"]);
 				Cart.sellerId = Convert.ToInt32(dt.Rows[i]["sellerId"]);
 				Cart.sellerName = Convert.ToString(dt.Rows[i]["sellerName"]);
+				Cart.listingId = Convert.ToInt32(dt.Rows[i]["listingId"]);
 				Cart.shreets = Convert.ToInt32(dt.Rows[i]["shreets"]);
 				Cart.elbas = Convert.ToInt32(dt.Rows[i]["elbas"]);
 				Cart.price = Convert.ToInt32(dt.Rows[i]["price"]);
@@ -67,7 +71,7 @@ namespace Shoryan.Models
 		[HttpDelete("api/userCart/{userId}/{listingId}")]
 		public JsonResult removeItemFromCart(int userId, int listingId)
 		{
-			string StoredProcedureName = UserCartProcedures.getCartItems;
+			string StoredProcedureName = UserCartProcedures.deleteCartItem;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@user_id", userId);
 			Parameters.Add("@listing_id", listingId);

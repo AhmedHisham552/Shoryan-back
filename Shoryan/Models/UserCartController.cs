@@ -32,9 +32,12 @@ namespace Shoryan.Models
 			List<int> ListingsIds = new List<int>();
 
 			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-			for (int i = 0; i < dt.Rows.Count; i++)
+			if (dt != null)
 			{
-				ListingsIds.Add(Convert.ToInt32(dt.Rows[i][0]));
+				for (int i = 0; i < dt.Rows.Count; i++)
+				{
+					ListingsIds.Add(Convert.ToInt32(dt.Rows[i][0]));
+				}
 			}
 
 			return ListingsIds;
@@ -66,7 +69,7 @@ namespace Shoryan.Models
 			string StoredProcedureName = UserCartProcedures.addCartItem;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@user_id", userId);
-
+			Parameters.Add("@listing_id", listingId);
 
 			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}

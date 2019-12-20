@@ -76,10 +76,8 @@ namespace Shoryan.Controllers
 				string StoredProcedureName = UsersProcedures.addUser;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@name", User_Details.name);
-				Parameters.Add("@registrationDate", User_Details.registrationDate);
 				Parameters.Add("@email", User_Details.email);
 				Parameters.Add("@address", User_Details.address);
-				Parameters.Add("@rating", User_Details.rating);
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);
@@ -98,10 +96,8 @@ namespace Shoryan.Controllers
 				string StoredProcedureName = UsersProcedures.addUser;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@name", User_Details.name);
-				Parameters.Add("@registrationDate", User_Details.registrationDate);
 				Parameters.Add("@email", User_Details.email);
 				Parameters.Add("@address", User_Details.address);
-				Parameters.Add("@rating", User_Details.rating);
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);
@@ -118,10 +114,8 @@ namespace Shoryan.Controllers
 				string StoredProcedureName = UsersProcedures.addUser;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@name", User_Details.name);
-				Parameters.Add("@registrationDate", User_Details.registrationDate);
 				Parameters.Add("@email", User_Details.email);
 				Parameters.Add("@address", User_Details.address);
-				Parameters.Add("@rating", User_Details.rating);
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);

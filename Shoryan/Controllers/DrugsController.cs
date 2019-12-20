@@ -107,13 +107,15 @@ namespace Shoryan.Controllers
 		{
 			List<int> ids = aux_getAllDrugsIds();
 
-			List<JsonResult> totalJson = new List<JsonResult>();
+			List<Drugs> totalDrugs = new List<Drugs>();
 			foreach(var id in ids)
 			{
-				totalJson.Add(getDrugById(id));
+				var DrugsJson = JsonConvert.SerializeObject(getDrugById(id).Value, Newtonsoft.Json.Formatting.Indented);
+				var Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+				totalDrugs.Add(Drug);
 			}
 
-			return Json(totalJson);
+			return Json(totalDrugs);
 		}
 
 

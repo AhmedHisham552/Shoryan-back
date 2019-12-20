@@ -27,10 +27,13 @@ namespace Shoryan.Controllers
         public IActionResult getAllListing()
         {
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
-
-            DataTable dt = dbMan.ExecuteReader(ComplaintsProcedure.getAllComplaints, Parameters);
-
-            return Json(dt);
+			try {
+				DataTable dt = dbMan.ExecuteReader(ComplaintsProcedure.getAllComplaints, Parameters);
+				return Json(dt);
+			} catch (Exception e)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
         }
 
         [HttpPost("api/Complaints")]
@@ -48,12 +51,18 @@ namespace Shoryan.Controllers
             Parameters.Add("@courierId", complaint.courierID);
             Parameters.Add("@fromCourierToUser", complaint.fromCourierToUser);
 
-
-            int returnValue = dbMan.ExecuteNonQuery(ComplaintsProcedure.addComplaint, Parameters);
-
-            if (returnValue == 0) return StatusCode(500);
-            return Json("Data Added successfully");
-
+			try
+			{
+				int returnValue = dbMan.ExecuteNonQuery(ComplaintsProcedure.addComplaint, Parameters);
+				if (returnValue == -1)
+					return StatusCode(200, "Complaint added successfully");
+				else
+					return StatusCode(500, "Internal Server Error");
+			}
+			catch(Exception e)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
         }
 
     }

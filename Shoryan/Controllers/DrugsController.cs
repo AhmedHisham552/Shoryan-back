@@ -25,8 +25,10 @@ namespace Shoryan.Controllers
 		{
 			string StoredProcedureName = DrugsProcedures.getAllDrugsIds;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
-			
-			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			DataTable dt;
+
+			dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
 			List<int> DrugsIds = new List<int>();
 			if(dt!=null)
 				for (int i = 0; i < dt.Rows.Count; i++)
@@ -103,15 +105,25 @@ namespace Shoryan.Controllers
 		//}
 
 		[HttpGet("api/drugs/")]
-		public JsonResult getAllDrugs()
+		public IActionResult getAllDrugs()
 		{
 			List<int> ids = aux_getAllDrugsIds();
 
 			List<Drugs> totalDrugs = new List<Drugs>();
 			foreach(var id in ids)
 			{
-				var DrugsJson = JsonConvert.SerializeObject(getDrugById(id).Value, Newtonsoft.Json.Formatting.Indented);
-				var Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+				Drugs Drug = new Drugs();
+				try
+				{
+					JsonResult x = (JsonResult)(getDrugById(id));
+					var DrugsJson = JsonConvert.SerializeObject( x.Value, Newtonsoft.Json.Formatting.Indented);
+					Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+				}
+				catch (Exception)
+				{
+					return StatusCode(500, "Error parsing JSON");
+				}
+
 				totalDrugs.Add(Drug);
 			}
 
@@ -121,7 +133,7 @@ namespace Shoryan.Controllers
 
 
 		[HttpGet("api/drugs/{drugId}")]
-		public JsonResult getDrugById(int drugId)
+		public IActionResult getDrugById(int drugId)
 		{
 			string StoredProcedureName = DrugsProcedures.getDrug;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
@@ -135,6 +147,9 @@ namespace Shoryan.Controllers
 				Drug.id = drugId;
 				Drug.name = Convert.ToString(dt.Rows[0]["name"]);
 				Drug.officialPrice = Convert.ToInt32(dt.Rows[0]["officialPrice"]);
+			}else
+			{
+				return StatusCode(500, "Drug not found");
 			}
 
 
@@ -150,7 +165,7 @@ namespace Shoryan.Controllers
 		}
 
 		[HttpGet("api/drugsByCategory/{categoryId}")]
-		public JsonResult getDrugsByCategory(int categoryId)
+		public IActionResult getDrugsByCategory(int categoryId)
 		{
 
 			string StoredProcedureName = DrugsProcedures.getDrugsByCategory;
@@ -158,11 +173,20 @@ namespace Shoryan.Controllers
 
 			Parameters.Add("@categoryId", categoryId);
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Category not found");
+			}
+			
 		}
 
 		[HttpGet("api/drugsByName/{drugName}")]
-		public JsonResult getDrugsByName(string drugName)
+		public IActionResult getDrugsByName(string drugName)
 		{
 			string StoredProcedureName = DrugsProcedures.getDrugsByName;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
@@ -177,26 +201,46 @@ namespace Shoryan.Controllers
 
 			for (int i = 0;i<dt.Rows.Count;i++)
 			{
-				var DrugsJson = JsonConvert.SerializeObject(getDrugById(Convert.ToInt32(dt.Rows[0][0])).Value, Newtonsoft.Json.Formatting.Indented);
-				var Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+				Drugs Drug = new Drugs();
+				try
+				{
+					var DrugsJson = JsonConvert.SerializeObject(Json(getDrugById(Convert.ToInt32(dt.Rows[0][0]))).Value, Newtonsoft.Json.Formatting.Indented);
+					Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+				}
+				catch (Exception)
+				{
+
+					return StatusCode(500, "Error parsing JSON");
+				}
+
 				drugList.Add(Drug);
 			}
 			return Json(drugList);
 		}
 
 		[HttpGet("api/drugImg/{drugId}")]
-		public JsonResult getAllDrugImgs(int drugId)
+		public IActionResult getAllDrugImgs(int drugId)
 		{
 			string StoredProcedureName = DrugsProcedures.getDrugImgs;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
 			Parameters.Add("@drug_id", drugId);
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Drug not found");
+			}
+
+
 		}
 
 		[HttpGet("api/drugImg/{drugId}/{imgNo}")]
-		public JsonResult getDrugImg(int drugId, int imgNo)
+		public IActionResult getDrugImg(int drugId, int imgNo)
 		{
 			string StoredProcedureName = DrugsProcedures.getDrugImgs;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
@@ -204,22 +248,38 @@ namespace Shoryan.Controllers
 			Parameters.Add("@drug_id", drugId);
 			Parameters.Add("@img_no", imgNo);
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Drug or image not found");
+			}
 		}
 
 		[HttpGet("api/effectiveSubstances/{drugId}")]
-		public JsonResult getEffectiveSubstances(int drugId)
+		public IActionResult getEffectiveSubstances(int drugId)
 		{
 			string StoredProcedureName = DrugsProcedures.getEffectiveSubstances;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
 			Parameters.Add("@drug_id", drugId);
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Drug not found");
+			}
 		}
 
 		[HttpPost("api/drugImg/")]
-		public JsonResult addDrugImg([FromBody] Dictionary<string, object> JSONinput)
+		public IActionResult addDrugImg([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var DrugsImgsJson = JsonConvert.SerializeObject(JSONinput["DrugsImgsUrls"], Newtonsoft.Json.Formatting.Indented);
 			var DrugImgs = JsonConvert.DeserializeObject<DrugsImgsUrls>(DrugsImgsJson);
@@ -231,11 +291,19 @@ namespace Shoryan.Controllers
 			Parameters.Add("@img_no", DrugImgs.imgNo);
 			Parameters.Add("@url", DrugImgs.url);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Drug not found");
+			}
 		}
 
 		[HttpPost("api/drugCategory/")]
-		public JsonResult addDrugToCategory([FromBody] Dictionary<string, object> JSONinput)
+		public IActionResult addDrugToCategory([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var DrugsCategoriesJson = JsonConvert.SerializeObject(JSONinput["DrugsInCategory"], Newtonsoft.Json.Formatting.Indented);
 			var DrugsCategories = JsonConvert.DeserializeObject<DrugsInCategory>(DrugsCategoriesJson);
@@ -246,11 +314,19 @@ namespace Shoryan.Controllers
 			Parameters.Add("@drug_id", DrugsCategories.drugId);
 			Parameters.Add("@category_id", DrugsCategories.categoryId);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Drug or category not found");
+			}
 		}
 
 		[HttpPost("api/drugEffectiveSubstance/")]
-		public JsonResult addEffectiveSubstanceToDrug([FromBody] Dictionary<string, object> JSONinput)
+		public IActionResult addEffectiveSubstanceToDrug([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var DrugsEffectiveSubstanceJson = JsonConvert.SerializeObject(JSONinput["EffectiveSubstances"], Newtonsoft.Json.Formatting.Indented);
 			var DrugsEffectiveSubstance = JsonConvert.DeserializeObject<EffectiveSubstances>(DrugsEffectiveSubstanceJson);
@@ -261,15 +337,32 @@ namespace Shoryan.Controllers
 			Parameters.Add("@drugId", DrugsEffectiveSubstance.drugId);
 			Parameters.Add("@name", DrugsEffectiveSubstance.name);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Drug not found or substance already exists");
+			}
 		}
 
 
 		[HttpPost("api/drugs/")]
-		public JsonResult addDrug([FromBody] Dictionary<string, object> JSONinput)
+		public IActionResult addDrug([FromBody] Dictionary<string, object> JSONinput)
 		{
-			var DrugsJson = JsonConvert.SerializeObject(JSONinput["Drugs"], Newtonsoft.Json.Formatting.Indented);
-			var Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+			Drugs Drug = new Drugs();
+			try
+			{
+				var DrugsJson = JsonConvert.SerializeObject(JSONinput["Drugs"], Newtonsoft.Json.Formatting.Indented);
+				Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Error parsing JSON");
+			}
 
 			string StoredProcedureName = DrugsProcedures.addDrug;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
@@ -320,40 +413,73 @@ namespace Shoryan.Controllers
 		}
 
 		[HttpDelete("api/drugFromCategory/{drugId}/{categoryId}")]
-		public JsonResult deleteDrugFromCategory(int drugId, int categoryId)
+		public IActionResult deleteDrugFromCategory(int drugId, int categoryId)
 		{
 			string StoredProcedureName = DrugsProcedures.deleteDrugFromCategory;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@drug_id", drugId);
 			Parameters.Add("@category_id", categoryId);
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500,"Drug not in category");
+			}
 		}
 
 		[HttpDelete("api/effectiveSubstance/{drugId}/{effectiveSubstanceName}")]
-		public JsonResult deleteEffectiveSubstance(int drugId,string effectiveSubstanceName)
+		public IActionResult deleteEffectiveSubstance(int drugId,string effectiveSubstanceName)
 		{
 			string StoredProcedureName = DrugsProcedures.deleteEffectiveSubstance;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@drug_id", drugId);
 			Parameters.Add("@name", effectiveSubstanceName);
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Drug doesn't have this effective substance");
+			}
 		}
 
 		[HttpDelete("api/drugImgUrl/{drugId}/{imgNo}")]
-		public JsonResult deleteDrugImgUrl(int drugId, int imgNo)
+		public IActionResult deleteDrugImgUrl(int drugId, int imgNo)
 		{
 			string StoredProcedureName = DrugsProcedures.deleteDrugImg;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@drug_id", drugId);
 			Parameters.Add("@img_no", imgNo);
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Drug doesn't have this image");
+			}
 		}
 
 		[HttpDelete("api/drugs/{drugId}")]
-		public JsonResult deleteDrug(int drugId)
+		public IActionResult deleteDrug(int drugId)
 		{
-			var DrugJson = JsonConvert.SerializeObject(getDrugById(drugId).Value, Newtonsoft.Json.Formatting.Indented);
-			var Drug = JsonConvert.DeserializeObject<Drugs>(DrugJson);
+			Drugs Drug = new Drugs();
+			try
+			{
+				var DrugJson = JsonConvert.SerializeObject(Json(getDrugById(drugId)).Value, Newtonsoft.Json.Formatting.Indented);
+				Drug = JsonConvert.DeserializeObject<Drugs>(DrugJson);
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Error parsing JSON");
+			}
 
 
 			foreach (var x in Drug.effectiveSubstances)
@@ -375,7 +501,21 @@ namespace Shoryan.Controllers
 			string StoredProcedureName = DrugsProcedures.deleteDrug;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@id", drugId);
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+				if(returnCode == -1)
+				{
+					return StatusCode(200, "Drug deleted successfully");
+				}else
+				{
+					return StatusCode(500, "Internal Server Error");
+				}
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
 		}
 
 	}

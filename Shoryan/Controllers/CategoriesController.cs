@@ -22,16 +22,23 @@ namespace Shoryan.Controllers
 		}
 
 		[HttpGet("api/categories")]
-		public JsonResult getAllCategories()
+		public IActionResult getAllCategories()
 		{
 			string StoredProcedureName = CategoriesProcedures.getAllCategories;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception e)
+			{
+				return StatusCode(500, "Failed to retrieve categories");
+			}
 		}
 
 		[HttpPost("api/categories")]
-		public JsonResult addCategory([FromBody] Dictionary<string, object> JSONinput)
+		public IActionResult addCategory([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var CategoriesJson = JsonConvert.SerializeObject(JSONinput["Categories"], Newtonsoft.Json.Formatting.Indented);
 			var Category = JsonConvert.DeserializeObject<Categories>(CategoriesJson);
@@ -40,7 +47,16 @@ namespace Shoryan.Controllers
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@name", Category.name);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+
+				return StatusCode(500, "Category with same name already exists");
+			}
+
 		}
 
 		[HttpDelete("api/categories/{categoryId}")]
@@ -50,20 +66,21 @@ namespace Shoryan.Controllers
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
 			Parameters.Add("@id", categoryId);
-
-			int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
-
-			if(returnCode == -1)
+			try
 			{
-				return StatusCode(200, "Category deleted successfully");
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if (returnCode == -1)
+				{
+					return StatusCode(200, "Category deleted successfully");
+				}
+				else
+				{
+					return StatusCode(500, "Email doesn't exist");
+				}
 			}
-			else if(returnCode == 0)
+			catch(Exception e)
 			{
-				return StatusCode(404, "Email doesn't exist");
-			}
-			else
-			{
-				return StatusCode(404, "Unknown Error");
+				return StatusCode(500, "Internal Server Error");
 			}
 		}
 

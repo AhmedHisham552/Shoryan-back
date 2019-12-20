@@ -24,13 +24,29 @@ namespace Shoryan.Controllers
 			dbMan = new DBManager();
 		}
 
-		private int AuxaddPhoneNumber(int id,string phoneNumber)
+		[HttpPost("api/userPhoneNumber/{userId}/{phoneNumber}")]
+		public IActionResult addPhoneNumber(int userId,string phoneNumber)
 		{
 			string StoredProcedureName = UsersProcedures.addPhoneNumber;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
-			Parameters.Add("@userId", id);
+			Parameters.Add("@userId", userId);
 			Parameters.Add("@PhoneNumber", phoneNumber);
-			return dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if(returnCode == -1)
+				{
+					return StatusCode(200, "Phone Number added successfully");
+				}else
+				{
+					return StatusCode(500, "Phone Number already exists");
+				}
+			}
+			catch(Exception e)
+			{
+				return StatusCode(500, "Phone Number already exists");
+			}
+
 		}
 
 		private List<string>  aux_getPhoneNumbers(int id)
@@ -38,11 +54,23 @@ namespace Shoryan.Controllers
 			string StoredProcedureName = UsersProcedures.getPhoneNumber;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@userId", id);
-			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-			List<string> numbers = new List<string>();
-			for(int i = 0; i < dt.Rows.Count; i++)
+			DataTable dt;
+			try
 			{
-				numbers.Add(Convert.ToString(dt.Rows[i][0]));
+				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+
+			List<string> numbers = new List<string>();
+			if (dt != null)
+			{
+				for (int i = 0; i < dt.Rows.Count; i++)
+				{
+					numbers.Add(Convert.ToString(dt.Rows[i][0]));
+				}
 			}
 			return numbers;
 		}
@@ -64,11 +92,20 @@ namespace Shoryan.Controllers
 	}*/
 
 		[HttpPost("api/user")]
-		public JsonResult addUser([FromBody] Dictionary<string,object> JSONinput)
+		public IActionResult addUser([FromBody] Dictionary<string,object> JSONinput)
 		{
+			string User_DetailsJson;
+			User_Details User_Details;
 			DataTable dt;
-			var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
-			var User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
+			try {
+				User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
+				User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
+			}
+			catch (Exception e)
+			{
+				return StatusCode(500, "Error parsing JSON");
+			}
+
 			if (User_Details.type == "Normal")
 			{
 				var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
@@ -82,11 +119,18 @@ namespace Shoryan.Controllers
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);
 				Parameters.Add("@gender", NormalUsers.gender);
+				
 				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+				
+				if(dt == null)
+				{
+					return StatusCode(500, "User already already exists");
+				}
+
 				User_Details.id = Convert.ToInt32(dt.Rows[0][0]);
 				for (int i = 0; i < User_Details.phoneNumbers.Count; i++)
 				{
-					AuxaddPhoneNumber(User_Details.id, User_Details.phoneNumbers[i]);
+					addPhoneNumber(User_Details.id, User_Details.phoneNumbers[i]);
 				}
 			}
 			else if(User_Details.type == "Courier")
@@ -103,10 +147,17 @@ namespace Shoryan.Controllers
 				Parameters.Add("@type", User_Details.type);
 				Parameters.Add("@area", Couriers.area);
 				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
+				if (dt == null)
+				{
+					return StatusCode(500, "User already already exists");
+				}
+
 				User_Details.id = Convert.ToInt32(dt.Rows[0][0]);
+
 				for (int i = 0; i < User_Details.phoneNumbers.Count; i++)
 				{
-					AuxaddPhoneNumber(User_Details.id, User_Details.phoneNumbers[i]);
+					addPhoneNumber(User_Details.id, User_Details.phoneNumbers[i]);
 				}
 			}
 			else
@@ -120,39 +171,75 @@ namespace Shoryan.Controllers
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);
 				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
+				if (dt == null)
+				{
+					return StatusCode(500, "User already already exists");
+				}
+
 				User_Details.id = Convert.ToInt32(dt.Rows[0][0]);
 				for (int i = 0; i < User_Details.phoneNumbers.Count; i++)
 				{
-					AuxaddPhoneNumber(User_Details.id, User_Details.phoneNumbers[i]);
+					addPhoneNumber(User_Details.id, User_Details.phoneNumbers[i]);
 				}
 			}
 			return Json(dt);
 		}
 		[HttpGet("api/user")]
-		public JsonResult getAllUsers()
+		public IActionResult getAllUsers()
 		{
 			string StoredProcedureName = UsersProcedures.getAllUsers;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
 		}
 		[HttpPost("api/user/{userId}")]
-		public JsonResult deleteUser(int userId)
+		public IActionResult deleteUser(int userId)
 		{
 			string StoredProcedureName = UsersProcedures.deleteUser;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@userId", userId);
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if(returnCode == -1)
+				{
+					return StatusCode(200, "User deleted successfully");
+				}else
+				{
+					return StatusCode(500, "User not found");
+				}
+			}
+			catch (Exception e)
+			{
+				return StatusCode(500, "Internal server error");
+			}
+
 		}
 		[HttpPut("api/user")]
-		public JsonResult editUserDetails([FromBody] Dictionary<string, object> JSONinput)
+		public IActionResult editUserDetails([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
 			var User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
 			if (User_Details.type == "Normal")
 			{
-				var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
-				var NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
+				NormalUsers NormalUsers = new NormalUsers();
+				try
+				{
+					var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
+					NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
+				}
+				catch (Exception)
+				{
+					return StatusCode(500, "Error parsing JSON");
+				}
 				string StoredProcedureName = UsersProcedures.editUserDetails;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@userId", User_Details.id);
@@ -161,12 +248,33 @@ namespace Shoryan.Controllers
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@address", User_Details.address);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
-				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+
+				try
+				{
+					int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+					if (returnCode == -1)
+						return StatusCode(200, "User edited successfully");
+					else
+						return StatusCode(500, "Internal Server Error");
+				}
+				catch (Exception)
+				{
+					return StatusCode(500, "Internal Server Error");
+				}
 			}
 			else if (User_Details.type == "Courier")
 			{
-				var CouriersJson = JsonConvert.SerializeObject(JSONinput["Couriers"], Newtonsoft.Json.Formatting.Indented);
-				var Couriers = JsonConvert.DeserializeObject<Couriers>(CouriersJson);
+				Couriers Couriers = new Couriers();
+				try
+				{
+					var CouriersJson = JsonConvert.SerializeObject(JSONinput["Couriers"], Newtonsoft.Json.Formatting.Indented);
+					Couriers = JsonConvert.DeserializeObject<Couriers>(CouriersJson);
+				}
+				catch(Exception)
+				{
+					return StatusCode(500, "Error parsing JSON");
+				}
+
 				string StoredProcedureName = UsersProcedures.editUserDetails;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@userId", User_Details.id);
@@ -176,7 +284,18 @@ namespace Shoryan.Controllers
 				Parameters.Add("@address", User_Details.address);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@area", Couriers.area);
-				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+				try
+				{
+					int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+					if (returnCode == -1)
+						return StatusCode(200, "User edited successfully");
+					else
+						return StatusCode(500, "Internal Server Error");
+				}
+				catch (Exception)
+				{
+					return StatusCode(500, "Internal Server Error");
+				}
 			}
 			else if (User_Details.type == "Admin")
 			{
@@ -190,7 +309,18 @@ namespace Shoryan.Controllers
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@address", User_Details.address);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
-				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+				try
+				{
+					int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+					if (returnCode == -1)
+						return StatusCode(200, "User edited successfully");
+					else
+						return StatusCode(500, "Internal Server Error");
+				}
+				catch (Exception)
+				{
+					return StatusCode(500, "Internal Server Error");
+				}
 			}
 			else
 			{
@@ -204,7 +334,18 @@ namespace Shoryan.Controllers
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@address", User_Details.address);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
-				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+				try
+				{
+					int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+					if (returnCode == -1)
+						return StatusCode(200, "User edited successfully");
+					else
+						return StatusCode(500, "Internal Server Error");
+				}
+				catch (Exception)
+				{
+					return StatusCode(500, "Internal Server Error");
+				}
 			}
 		}
 		[HttpPost("api/login")]
@@ -236,13 +377,19 @@ namespace Shoryan.Controllers
 			
 		}
 		[HttpGet("api/user/{userId}")]
-		public JsonResult getUserDetails(int userId)
+		public IActionResult getUserDetails(int userId)
 		{
 			string StoredProcedureName = UsersProcedures.getUserDetails;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@userId", userId);
+			DataTable dt;
+			dt=dbMan.ExecuteReader(StoredProcedureName, Parameters);
 
-			DataTable dt=dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			if(dt == null)
+			{
+				return StatusCode(500, "User not found");
+			}
+
 			string type = Convert.ToString(dt.Rows[0]["type"]);
 			if (type == "Normal")
 			{
@@ -295,12 +442,20 @@ namespace Shoryan.Controllers
 
 		}
         [HttpGet("api/ActiveListings/{userId}")]
-        public JsonResult getUserActiveListings(int userId)
+        public IActionResult getUserActiveListings(int userId)
         {
             string StoredProcedureName = UsersProcedures.getActiveListings;
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@userId", userId);
-            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "User id not found");
+			}
+            
         }
     }
 

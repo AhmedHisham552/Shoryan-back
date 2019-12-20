@@ -294,6 +294,14 @@ namespace Shoryan.Controllers
 			}
 
 		}
-	}
+        [HttpGet("api/ActiveListings/{userId}")]
+        public JsonResult getUserActiveListings(int userId)
+        {
+            string StoredProcedureName = UsersProcedures.getActiveListings;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@userId", userId);
+            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+        }
+    }
 
 }

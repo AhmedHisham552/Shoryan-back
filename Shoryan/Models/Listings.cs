@@ -14,5 +14,7 @@ namespace Shoryan.Models
         public int elbas { get; set; }
         public int drugId { get; set; }
         public int userId { get; set; }
+        public string sellerName { get; set; }
+        public string drugName { get; set; }
     }
 }

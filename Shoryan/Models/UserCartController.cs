@@ -71,7 +71,7 @@ namespace Shoryan.Models
 			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
 		}
 
-		[HttpDelete("api/userCart/{userId}")]
+		[HttpDelete("api/userCart/{userId}/{listingId}")]
 		public JsonResult removeItemFromCart(int userId, int listingId)
 		{
 			string StoredProcedureName = UserCartProcedures.getCartItems;

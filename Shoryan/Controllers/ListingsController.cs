@@ -58,7 +58,8 @@ namespace Shoryan.Controllers
 			listing.elbas = Convert.ToInt32(dt.Rows[0]["elbas"]);
 			listing.userId = Convert.ToInt32(dt.Rows[0]["userId"]);
 			listing.drugId = Convert.ToInt32(dt.Rows[0]["drugId"]);
-
+            listing.drugName = Convert.ToString(dt.Rows[0]["drugName"]);
+            listing.sellerName = Convert.ToString(dt.Rows[0]["sellerName"]);
 			return Json(listing);
 
         }

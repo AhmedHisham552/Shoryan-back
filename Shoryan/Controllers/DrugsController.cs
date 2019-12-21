@@ -551,12 +551,11 @@ namespace Shoryan.Controllers
 				return StatusCode(500, "Internal Server Error");
 			}
 		}
-        //[HttpGet("api/searchDrugs/{drugName}")]
-        //public IActionResult searchInDrugs(string drugName)
-        //{
-            
-        //    
-        //}
+        [HttpGet("api/searchDrugs/{text}")]
+        public IActionResult searchInDrugs(string text)
+        {
+            return (getDrugsByName(text));
+        }
 
     }
 }

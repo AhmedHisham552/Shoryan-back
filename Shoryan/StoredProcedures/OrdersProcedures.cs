@@ -13,5 +13,6 @@ namespace DBapplication
         public static string getCourierUpcomingOrders = "getCourierUpcomingOrders";
         public static string getCourierPastOrders = "getCourierPastOrders";
         public static string getOrderOfUser = "getOrderOfUser";
+        public static string changeOrderState = "setOrderStateToDelivered";
     }
 }

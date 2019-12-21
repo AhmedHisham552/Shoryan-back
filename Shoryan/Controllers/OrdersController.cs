@@ -173,5 +173,18 @@ namespace Shoryan.Controllers
             return Json(dt);
         }
 
+        [HttpPost("api/Order/{orderId}")]
+        public IActionResult setStatusToDelivered(int orderId)
+        {
+            string storedProcedureName = OrdersProcedures.changeOrderState;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@orderId", orderId);
+            int returnedValue = dbMan.ExecuteNonQuery(storedProcedureName, Parameters);
+            if (returnedValue == -1)
+                return StatusCode(200);
+            else
+                return StatusCode(500);
+            
+        }
     }
 }

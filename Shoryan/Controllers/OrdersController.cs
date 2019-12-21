@@ -57,9 +57,7 @@ namespace Shoryan.Controllers
             Parameters.Add("@userId", order.userId);
             Parameters.Add("@DeliverPrice", order.deliverPrice);
             Parameters.Add("@Discount", order.discount);
-            Parameters.Add("@courierId", order.courierId);
 
-           
             DataTable dt = dbMan.ExecuteReader( OrdersProcedures.addOrder , Parameters);
 
             if (dt == null) return StatusCode(500);

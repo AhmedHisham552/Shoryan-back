@@ -10,6 +10,8 @@
     <Content Remove="NewFolder1\**" />
     <EmbeddedResource Remove="NewFolder1\**" />
     <None Remove="NewFolder1\**" />
+    <Content Remove="wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
+    <Compile Remove="Controllers\ListingsController %28copy%29.cs" />
   </ItemGroup>
 
   <ItemGroup>

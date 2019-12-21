@@ -122,9 +122,9 @@ namespace Shoryan.Controllers
 					return StatusCode(200, "Giftcard redeemed successfully");
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
-				return StatusCode(500, "Internal Server Error");
+				return StatusCode(500, e.Message);
 				throw;
 			}
 		}

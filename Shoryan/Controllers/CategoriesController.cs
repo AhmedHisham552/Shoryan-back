@@ -94,5 +94,23 @@ namespace Shoryan.Controllers
             Parameters.Add("@search", text);
             return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
         }
-    }
+
+		[HttpGet("api/CategoryName/{categoryId}")]
+		public IActionResult getCategoryName(int categoryId)
+		{
+			string StoredProcedureName = CategoriesProcedures.getCategoryName;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@categoryId", categoryId);
+
+			try
+			{
+				return Json(Convert.ToString(dbMan.ExecuteScalar(StoredProcedureName, Parameters)));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Category not found");
+				throw;
+			}
+		}
+	}
 }

@@ -29,6 +29,7 @@ namespace Shoryan.Controllers
                 string webRootPath = _hostingEnvironment.WebRootPath;
 
                 var newPath = Path.Combine(webRootPath, folderName);
+                string relativePath = "";
 
                 if (!Directory.Exists(newPath))
                 {
@@ -37,13 +38,15 @@ namespace Shoryan.Controllers
                 if (file.Length > 0)
                 {
                     string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    relativePath = Path.Combine(folderName, fileName);
                     string fullPath = Path.Combine(newPath, fileName);
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
                         file.CopyTo(stream);
                     }
                 }
-                return Json("Upload Successful.");
+
+                return StatusCode(200, relativePath);
             }
             catch (System.Exception ex)
             {

@@ -505,7 +505,14 @@ namespace Shoryan.Controllers
 			{
 				return StatusCode(500, "User id not found");
 			}
-            
+        }
+        [HttpGet("api/searchUsers/{text}")]
+        public IActionResult searchInUsers(string text)
+        {
+            string StoredProcedureName = UsersProcedures.searchInUsers;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@search", text);
+            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
         }
     }
 

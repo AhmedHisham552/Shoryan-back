@@ -153,6 +153,15 @@ namespace Shoryan.Controllers
 			}
 
         }
+        [HttpGet("api/searchListings/{text}")]
+        public IActionResult searchInUsers(int text)
+        {   
+            
+            string StoredProcedureName = ListingsProcedures.searchInListings;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@search", text);
+            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+        }
 
     }
 }

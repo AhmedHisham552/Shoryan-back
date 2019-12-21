@@ -8,7 +8,8 @@ namespace DBapplication
     public class ComplaintsProcedure
     {
 		public static string getAllComplaints = "getAllComplaints"; 
-		public static string addComplaint = "addComplaint"; 
+		public static string addComplaint = "addComplaint";
+        public static string searchComplaints = "searchInComplaints";
 
     }
 }

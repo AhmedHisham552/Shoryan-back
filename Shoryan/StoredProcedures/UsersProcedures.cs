@@ -18,5 +18,6 @@ namespace Shoryan.StoredProcedures
         public static string deletePhoneNumber = "deletePhoneNumber";
         public static string getActiveListings = "getAllActiveListingsByUserId";
 		public static string checkPhoneNumberExists = "checkPhoneNumberExists";
-	}
+        public static string searchInUsers = "searchUsers";
+    }
 }

@@ -20,6 +20,7 @@ namespace DBapplication
 		public static string getAllDrugEffectiveSubstances = "getAllDrugEffectiveSubstances";
 		public static string getAllDrugImages = "getAllDrugImages";
 		public static string getAllDrugCategories = "getAllDrugCategories";
+        public static string searchInDrugs = "searchInDrugs";
 
 
 		//adders

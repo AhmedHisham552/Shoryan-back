@@ -155,5 +155,14 @@ namespace Shoryan.Controllers
 			}
 		}
 
-	}
+        [HttpGet("api/searchGiftCards/{text}")]
+        public IActionResult searchInGiftCards(string text)
+        {
+            string StoredProcedureName = GiftCardsProcedures.searchInGiftCards;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@search", text);
+            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+        }
+
+    }
 }

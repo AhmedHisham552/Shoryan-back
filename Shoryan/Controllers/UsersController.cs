@@ -249,46 +249,49 @@ namespace Shoryan.Controllers
 			}
 
 		}
-		[HttpPut("api/user")]
+        /* IF COURIER JSON : 
+         *                      {
+                                    "User_Details":{"id":28,
+	                                    "gender":"M",
+	                                    "balance":111,
+	                                    "name":"hamad hamadeno",
+	                                    "registrationDate":"2019-12-20T00:00:00",
+	                                    "email":"hamada@gmail.com",
+	                                    "address":"6 6 ",
+	                                    "rating":0,
+	                                    "password":"123456",
+	                                    "imgUrl":"",
+	                                    "type":"Courier",
+	                                    },
+                                    "Couriers":{
+                                        "area":"value"
+	                                    }
+                                  }
+          ELSE JSON :
+                         {
+                                    "User_Details":{"id":28,
+	                                    "gender":"M",
+	                                    "balance":111,
+	                                    "name":"hamad hamadeno",
+	                                    "registrationDate":"2019-12-20T00:00:00",
+	                                    "email":"hamada@gmail.com",
+	                                    "address":"6 6 ",
+	                                    "rating":0,
+	                                    "password":"123456",
+	                                    "imgUrl":"",
+	                                    "type":"Normal"
+	                      }
+                
+                
+         *                   
+         */
+        [HttpPut("api/user")]
 		public IActionResult editUserDetails([FromBody] Dictionary<string, object> JSONinput)
 		{
 			var User_DetailsJson = JsonConvert.SerializeObject(JSONinput["User_Details"], Newtonsoft.Json.Formatting.Indented);
 			var User_Details = JsonConvert.DeserializeObject<User_Details>(User_DetailsJson);
-			if (User_Details.type == "Normal")
-			{
-				NormalUsers NormalUsers = new NormalUsers();
-				try
-				{
-					var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
-					NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
-				}
-				catch (Exception)
-				{
-					return StatusCode(500, "Error parsing JSON");
-				}
-				string StoredProcedureName = UsersProcedures.editUserDetails;
-				Dictionary<string, object> Parameters = new Dictionary<string, object>();
-				Parameters.Add("@userId", User_Details.id);
-				Parameters.Add("@name", User_Details.name);
-				Parameters.Add("@email", User_Details.email);
-				Parameters.Add("@password", User_Details.password);
-				Parameters.Add("@address", User_Details.address);
-				Parameters.Add("@imgUrl", User_Details.imgUrl);
-                Parameters.Add("@area", DBNull.Value);
-                try
-				{
-                    int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
-					if (returnCode == -1)
-						return StatusCode(200, "User edited successfully");
-					else
-						return StatusCode(500, "Internal Server Error");
-				}
-				catch (Exception)
-				{
-					return StatusCode(500, "Internal Server Error");
-				}
-			}
-			else if (User_Details.type == "Courier")
+			
+			if (User_Details.type == "Courier")
 			{
 				Couriers Couriers = new Couriers();
 				try
@@ -323,57 +326,32 @@ namespace Shoryan.Controllers
 					return StatusCode(500, "Internal Server Error");
 				}
 			}
-			else if (User_Details.type == "Admin")
-			{
-				//var AdminsJson = JsonConvert.SerializeObject(JSONinput["Adminstartors"], Newtonsoft.Json.Formatting.Indented);
-				//var Admins = JsonConvert.DeserializeObject<Adminstrators>(AdminsJson);
-				string StoredProcedureName = UsersProcedures.editUserDetails;
-				Dictionary<string, object> Parameters = new Dictionary<string, object>();
-				Parameters.Add("@userId", User_Details.id);
-				Parameters.Add("@name", User_Details.name);
-				Parameters.Add("@email", User_Details.email);
-				Parameters.Add("@password", User_Details.password);
-				Parameters.Add("@address", User_Details.address);
-				Parameters.Add("@imgUrl", User_Details.imgUrl);
-				try
-				{
-					int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
-					if (returnCode == -1)
-						return StatusCode(200, "User edited successfully");
-					else
-						return StatusCode(500, "Internal Server Error");
-				}
-				catch (Exception)
-				{
-					return StatusCode(500, "Internal Server Error");
-				}
-			}
-			else
-			{
-			   // var PharmaciesJson = JsonConvert.SerializeObject(JSONinput["Pharmacies"], Newtonsoft.Json.Formatting.Indented);
-			   // var Pharmacies = JsonConvert.DeserializeObject<Pharmacies>(PharmaciesJson);
-				string StoredProcedureName = UsersProcedures.editUserDetails;
-				Dictionary<string, object> Parameters = new Dictionary<string, object>();
-				Parameters.Add("@userId", User_Details.id);
-				Parameters.Add("@name", User_Details.name);
-				Parameters.Add("@email", User_Details.email);
-				Parameters.Add("@password", User_Details.password);
-				Parameters.Add("@address", User_Details.address);
-				Parameters.Add("@imgUrl", User_Details.imgUrl);
-				try
-				{
-					int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
-					if (returnCode == -1)
-						return StatusCode(200, "User edited successfully");
-					else
-						return StatusCode(500, "Internal Server Error");
-				}
-				catch (Exception)
-				{
-					return StatusCode(500, "Internal Server Error");
-				}
-			}
-		}
+           else 
+            {
+                string StoredProcedureName = UsersProcedures.editUserDetails;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@userId", User_Details.id);
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                Parameters.Add("@area", DBNull.Value);
+                try
+                {
+                    int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+                    if (returnCode == -1)
+                        return StatusCode(200, "User edited successfully");
+                    else
+                        return StatusCode(500, "Internal Server Error");
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Internal Server Error");
+                }
+            }
+
+        }
 		[HttpPost("api/login")]
 		public IActionResult authenticateUser([FromBody] Dictionary<string, object> JSONinput)
 		{

@@ -11,5 +11,10 @@ namespace DBapplication
 		public static string getTotalIncomeThisMonth = "getTotalIncomeThisMonth";
 		public static string getCountOrdersMonth = "getCountOrdersMonth";
 		public static string getComplaintsMonth = "getComplaintsMonth";
-	}
+
+        public static string getTypesOfUsersCount = "getTypesOfUsersCount";
+        public static string getDrugCountinCategory = "getDrugCountinCategory";
+        
+
+    }
 }

@@ -84,5 +84,47 @@ namespace Shoryan.Controllers
 			else
 				return Json(0);
 		}
-	}
+
+
+        [HttpGet("api/UsersOfEachType")]
+        public JsonResult getUsersOfEachType()
+        {
+            string StoredProcedureName = StatisticsProcedures.getTypesOfUsersCount;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+            var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
+            if (dt != null)
+            {
+                return Json(dt);
+            }
+            else
+            {
+                return Json(0);
+            }
+
+
+        }
+
+
+        [HttpGet("api/DrugsOfEachCategory")]
+        public JsonResult getDrugsCountInCategories()
+        {
+            string StoredProcedureName = StatisticsProcedures.getDrugCountinCategory;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
+            var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
+            if (dt != null)
+            {
+                return Json(dt);
+            }
+            else
+            {
+                return Json(0);
+            }
+
+
+        }
+    }
 }

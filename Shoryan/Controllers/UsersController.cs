@@ -24,7 +24,7 @@ namespace Shoryan.Controllers
 			dbMan = new DBManager();
 		}
 
-        [HttpPost("api/deletePhoneNumber/{userId}/{phoneNumber}")]
+        [HttpDelete("api/deletePhoneNumber/{userId}/{phoneNumber}")]
         public IActionResult deletePhoneNumber(int userId, string phoneNumber)
         {
             string StoredProcedureName = UsersProcedures.deletePhoneNumber;
@@ -274,10 +274,10 @@ namespace Shoryan.Controllers
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@address", User_Details.address);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
-
-				try
+                Parameters.Add("@area", DBNull.Value);
+                try
 				{
-					int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+                    int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
 					if (returnCode == -1)
 						return StatusCode(200, "User edited successfully");
 					else

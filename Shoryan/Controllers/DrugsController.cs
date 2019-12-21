@@ -127,51 +127,62 @@ namespace Shoryan.Controllers
 
 
 			Dictionary<int, Drugs> DrugsDict = new Dictionary<int, Drugs>();
-
-			for(int i=0;i<DrugsInformation.Rows.Count;i++)
+			if (DrugsInformation != null)
 			{
-				Drugs Drug = new Drugs();
-				Drug.effectiveSubstances = new List<string>();
-				Drug.categoriesIds = new List<int>();
-				Drug.imgsUrls = new List<string>();
-				Drug.id = Convert.ToInt32(DrugsInformation.Rows[i]["id"]);
-				Drug.name = Convert.ToString(DrugsInformation.Rows[i]["name"]);
-				Drug.officialPrice = Convert.ToInt32(DrugsInformation.Rows[i]["officialPrice"]);
-
-				DrugsDict.Add(Drug.id, Drug);
-			}
-
-
-			for(int i=0;i<EffectiveSubstances.Rows.Count;i++)
-			{
-				int drugId = Convert.ToInt32(EffectiveSubstances.Rows[i]["drugId"]);
-				string substanceName = Convert.ToString(EffectiveSubstances.Rows[i]["name"]);
-
-				if (DrugsDict.ContainsKey(drugId))
+				for (int i = 0; i < DrugsInformation.Rows.Count; i++)
 				{
-					DrugsDict[drugId].effectiveSubstances.Add(substanceName);
+					Drugs Drug = new Drugs();
+					Drug.effectiveSubstances = new List<string>();
+					Drug.categoriesIds = new List<int>();
+					Drug.imgsUrls = new List<string>();
+					Drug.id = Convert.ToInt32(DrugsInformation.Rows[i]["id"]);
+					Drug.name = Convert.ToString(DrugsInformation.Rows[i]["name"]);
+					Drug.officialPrice = Convert.ToInt32(DrugsInformation.Rows[i]["officialPrice"]);
+
+					DrugsDict.Add(Drug.id, Drug);
 				}
 			}
 
-			for (int i = 0; i < Drugs_in_categories.Rows.Count; i++)
+			if (EffectiveSubstances != null)
 			{
-				int drugId = Convert.ToInt32(Drugs_in_categories.Rows[i]["drug_id"]);
-				int categoryId = Convert.ToInt32(Drugs_in_categories.Rows[i]["category_id"]);
-
-				if (DrugsDict.ContainsKey(drugId))
+				for (int i = 0; i < EffectiveSubstances.Rows.Count; i++)
 				{
-					DrugsDict[drugId].categoriesIds.Add(categoryId);
+					int drugId = Convert.ToInt32(EffectiveSubstances.Rows[i]["drugId"]);
+					string substanceName = Convert.ToString(EffectiveSubstances.Rows[i]["name"]);
+
+					if (DrugsDict.ContainsKey(drugId))
+					{
+						DrugsDict[drugId].effectiveSubstances.Add(substanceName);
+					}
 				}
 			}
 
-			for (int i = 0; i < Drugs_imgs_urls.Rows.Count; i++)
-			{
-				int drugId = Convert.ToInt32(Drugs_imgs_urls.Rows[i]["drug_id"]);
-				string drugImgUrl = Convert.ToString(Drugs_imgs_urls.Rows[i]["url"]);
 
-				if (DrugsDict.ContainsKey(drugId))
+			if (Drugs_in_categories != null)
+			{
+				for (int i = 0; i < Drugs_in_categories.Rows.Count; i++)
 				{
-					DrugsDict[drugId].imgsUrls.Add(drugImgUrl);
+					int drugId = Convert.ToInt32(Drugs_in_categories.Rows[i]["drug_id"]);
+					int categoryId = Convert.ToInt32(Drugs_in_categories.Rows[i]["category_id"]);
+
+					if (DrugsDict.ContainsKey(drugId))
+					{
+						DrugsDict[drugId].categoriesIds.Add(categoryId);
+					}
+				}
+			}
+
+			if (Drugs_imgs_urls != null)
+			{
+				for (int i = 0; i < Drugs_imgs_urls.Rows.Count; i++)
+				{
+					int drugId = Convert.ToInt32(Drugs_imgs_urls.Rows[i]["drug_id"]);
+					string drugImgUrl = Convert.ToString(Drugs_imgs_urls.Rows[i]["url"]);
+
+					if (DrugsDict.ContainsKey(drugId))
+					{
+						DrugsDict[drugId].imgsUrls.Add(drugImgUrl);
+					}
 				}
 			}
 

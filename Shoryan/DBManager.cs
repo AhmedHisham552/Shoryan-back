@@ -35,7 +35,6 @@ namespace DBapplication
             {
                 Console.WriteLine("The DB connection is failed");
                 Console.WriteLine(e.ToString());
-				throw e;
             }
         }
 
@@ -58,7 +57,7 @@ namespace DBapplication
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-				throw ex;
+				//throw ex;
                 return 0;
             }
         }
@@ -97,7 +96,7 @@ namespace DBapplication
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-				throw ex;
+				//throw ex;
                 return null;
             }
         }
@@ -124,7 +123,7 @@ namespace DBapplication
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-				throw ex;
+				//throw ex;
                 return null;
             }
         }

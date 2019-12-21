@@ -57,7 +57,7 @@ namespace DBapplication
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-				//throw ex;
+                throw ex;
                 return 0;
             }
         }

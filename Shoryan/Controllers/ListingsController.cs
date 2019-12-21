@@ -108,8 +108,8 @@ namespace Shoryan.Controllers
 
             int returnValue = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
 
-            if (returnValue == 0) return StatusCode(500);
-            return Json("Data Added successfully");
+            if (returnValue == 0) return StatusCode(500, "Incorrect listing data");
+            return StatusCode(200,"Listing added successfully");
 
 		}
 
@@ -122,7 +122,15 @@ namespace Shoryan.Controllers
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@orderId", orderId);
 
-            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal server error");
+				throw;
+			}
 
         }
         [HttpGet("api/ListingsOfDrug/{drugId}")]
@@ -134,7 +142,15 @@ namespace Shoryan.Controllers
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@drugId", drugId);
 
-            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal server error");
+				throw;
+			}
 
         }
 

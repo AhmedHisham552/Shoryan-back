@@ -58,35 +58,75 @@ namespace Shoryan.Controllers
 		}
 
 		[HttpPost("api/userCart/{userId}/{listingId}")]
-		public JsonResult insertItemToCart(int userId, int listingId)
+		public IActionResult insertItemToCart(int userId, int listingId)
 		{
 			string StoredProcedureName = UserCartProcedures.addCartItem;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@user_id", userId);
 			Parameters.Add("@listing_id", listingId);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if (returnCode == -1)
+				{
+					return StatusCode(200, "Item added to cart");
+				}
+				else
+					return StatusCode(500, "Failed to add item to cart");
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Failed to add item to cart");
+				throw;
+			}
 		}
 
 		[HttpDelete("api/userCart/{userId}/{listingId}")]
-		public JsonResult removeItemFromCart(int userId, int listingId)
+		public IActionResult removeItemFromCart(int userId, int listingId)
 		{
 			string StoredProcedureName = UserCartProcedures.deleteCartItem;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@user_id", userId);
 			Parameters.Add("@listing_id", listingId);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if (returnCode == -1)
+					return StatusCode(200, "Item removed successfully");
+				else
+					return StatusCode(500, "Failed to remove item");
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Failed to remove item");
+				throw;
+			}
 		}
 
 		[HttpDelete("api/emptyCart/{userId}")]
-		public JsonResult emptyUserCart(int userId)
+		public IActionResult emptyUserCart(int userId)
 		{
 			string StoredProcedureName = UserCartProcedures.emptyUserCart;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@user_id", userId);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if (returnCode == -1)
+				{
+					return StatusCode(200, "Cart emptied successfuly");
+				}
+				else
+					return StatusCode(500, "Failed to empty cart");
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Failed to empty cart");
+				throw;
+			}
 		}
 
 	}

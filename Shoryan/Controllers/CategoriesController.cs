@@ -49,7 +49,9 @@ namespace Shoryan.Controllers
 
 			try
 			{
-				return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+                dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+
+                return StatusCode(200, "Category added successfully");
 			}
 			catch (Exception)
 			{

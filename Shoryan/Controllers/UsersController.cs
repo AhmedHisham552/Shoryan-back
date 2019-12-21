@@ -539,6 +539,17 @@ namespace Shoryan.Controllers
             Parameters.Add("@search", text);
             return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
         }
+
+        [HttpPost("api/Balance/{userId}/{newBalance}")]
+        public IActionResult updateUserBalance(int userId,int newBalance)
+        {
+            string StoredProcedureName = UsersProcedures.updateUserBalance;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@userId", userId);
+            Parameters.Add("@newBalance", newBalance);
+            return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+        }
+
     }
 
 }

@@ -165,7 +165,25 @@ namespace Shoryan.Controllers
             }
         }
 
+        [HttpGet("api/MoneySpentStat/{userId}/{year}")]
+        public JsonResult getUserMoneySpentByYear(int userId, int year)
+        {
+            string StoredProcedureName = StatisticsProcedures.getUserMoneySpent;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@userId", userId);
+            Parameters.Add("@orderYear", year);
 
+            var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
+            if (dt != null)
+            {
+                return Json(dt);
+            }
+            else
+            {
+                return Json(0);
+            }
+        }
 
     }
 }

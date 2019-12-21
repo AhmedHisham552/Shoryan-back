@@ -329,7 +329,9 @@ namespace Shoryan.Controllers
 				Parameters.Add("@password", User_Details.password);
 				Parameters.Add("@address", User_Details.address);
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
+				Parameters.Add("@type", User_Details.type);
 				Parameters.Add("@area", Couriers.area);
+
 				try
 				{
 					int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
@@ -363,7 +365,8 @@ namespace Shoryan.Controllers
                 Parameters.Add("@password", User_Details.password);
                 Parameters.Add("@address", User_Details.address);
                 Parameters.Add("@imgUrl", User_Details.imgUrl);
-                Parameters.Add("@area", NormalUser.area);
+				Parameters.Add("@type", User_Details.type);
+				Parameters.Add("@area", NormalUser.area);
                 try
                 {
                     int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
@@ -387,7 +390,8 @@ namespace Shoryan.Controllers
                 Parameters.Add("@password", User_Details.password);
                 Parameters.Add("@address", User_Details.address);
                 Parameters.Add("@imgUrl", User_Details.imgUrl);
-                Parameters.Add("@area", DBNull.Value);
+				Parameters.Add("@type", User_Details.type);
+				Parameters.Add("@area", DBNull.Value);
 
                 try
                 {
@@ -455,6 +459,7 @@ namespace Shoryan.Controllers
 				user.type = type;
 				user.gender = Convert.ToChar(dt.Rows[0]["gender"]);
 				user.balance = Convert.ToInt32(dt.Rows[0]["balance"]);
+				user.area = Convert.ToString(dt.Rows[0]["area"]);
 				user.phoneNumbers = aux_getPhoneNumbers(user.id);
 				return Json(user);
 			}

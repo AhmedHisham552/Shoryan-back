@@ -150,7 +150,7 @@ namespace Shoryan.Controllers
 				
 				if(dt == null)
 				{
-					return StatusCode(500, "User already already exists");
+					return StatusCode(500, "Email already already exists");
 				}
 
 				User_Details.id = Convert.ToInt32(dt.Rows[0][0]);
@@ -176,7 +176,7 @@ namespace Shoryan.Controllers
 
 				if (dt == null)
 				{
-					return StatusCode(500, "User already already exists");
+					return StatusCode(500, "Email already already exists");
 				}
 
 				User_Details.id = Convert.ToInt32(dt.Rows[0][0]);
@@ -200,7 +200,7 @@ namespace Shoryan.Controllers
 
 				if (dt == null)
 				{
-					return StatusCode(500, "User already already exists");
+					return StatusCode(500, "Email already already exists");
 				}
 
 				User_Details.id = Convert.ToInt32(dt.Rows[0][0]);
@@ -361,22 +361,16 @@ namespace Shoryan.Controllers
 			string StoredProcedureName = UsersProcedures.authenticateUser;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@email", User_Details.email);
+			Parameters.Add("@password", User_Details.password);
 
 			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 			if (dt == null)
 			{
-				return StatusCode(404,"Email doesn't exist");
+				return StatusCode(404,"Email or Password is incorrect");
 			}
 			else
 			{
-				if (User_Details.password == Convert.ToString(dt.Rows[0]["password"]))
-				{
-					return Json(dt);
-				}
-				else
-				{
-					return StatusCode(500, "Password is incorrect");
-                }
+				return Json(dt);
 			}
 			
 		}

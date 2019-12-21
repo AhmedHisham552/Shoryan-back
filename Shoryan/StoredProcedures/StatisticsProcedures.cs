@@ -14,6 +14,8 @@ namespace DBapplication
 
         public static string getTypesOfUsersCount = "getTypesOfUsersCount";
         public static string getDrugCountinCategory = "getDrugCountinCategory";
+        public static string getUserMoneyGained = "getMoneyGainedEachMonthbyUserIdandYear";
+        public static string getCourierOrdersDeliveredCount = "getCourierOrdersDeliveredCountbyIdandYear";
         
 
     }

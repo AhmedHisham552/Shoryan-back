@@ -123,8 +123,49 @@ namespace Shoryan.Controllers
             {
                 return Json(0);
             }
-
-
         }
+
+        [HttpGet("api/MoneyGainedStat/{userId}/{year}")]
+        public JsonResult getUserMoneyGainedByYear(int userId,int year)
+        {
+            string StoredProcedureName = StatisticsProcedures.getUserMoneyGained;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@userId", userId);
+            Parameters.Add("@orderYear", year);
+
+            var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
+            if (dt != null)
+            {
+                return Json(dt);
+            }
+            else
+            {
+                return Json(0);
+            }
+        }
+
+        [HttpGet("api/OrdersDeliveredStat/{courierId}/{year}")]
+        public JsonResult getCouriersDeliveredOrderCount(int courierId, int year)
+        {
+            string StoredProcedureName = StatisticsProcedures.getCourierOrdersDeliveredCount;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@courierId", courierId);
+            Parameters.Add("@orderYear", year);
+
+            var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
+            if (dt != null)
+            {
+                return Json(dt);
+            }
+            else
+            {
+                return Json(0);
+            }
+        }
+
+
+
     }
 }

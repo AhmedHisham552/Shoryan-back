@@ -11,6 +11,7 @@ namespace DBapplication
 		public static string redeemGiftCard = "redeemGiftCard";
 		public static string getGiftCards = "getGiftCards";
 		public static string deleteGiftCard = "deleteGiftCard";
+        public static string searchInGiftCards = "searchInGiftCards";
 
 	}
 }

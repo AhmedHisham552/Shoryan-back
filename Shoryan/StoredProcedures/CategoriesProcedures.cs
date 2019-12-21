@@ -10,5 +10,6 @@ namespace DBapplication
 		public static string getAllCategories = "getALLCategories";
 		public static string addCategory = "addCategory";
 		public static string deleteCategory = "deleteCategory";
+        public static string getSearchedCategories = "searchInCategories";
 	}
 }

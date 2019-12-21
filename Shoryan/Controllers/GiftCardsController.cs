@@ -23,63 +23,146 @@ namespace Shoryan.Controllers
 		}
 
 		[HttpGet("api/GiftCards")]
-		public JsonResult getGiftCards()
+		public IActionResult getGiftCards()
 		{
 			string StoredProcedureName = GiftCardsProcedures.getGiftCards;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal Server Error");
+				throw;
+			}
+
 
 		}
 
 		[HttpGet("api/GiftCards/{userId}")]
-		public JsonResult getGiftCardsByUserId(int userId)
+		public IActionResult getGiftCardsByUserId(int userId)
 		{
 			string StoredProcedureName = GiftCardsProcedures.getGiftCards;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
 			Parameters.Add("@userId", userId);
 
-			return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal Server Error");
+				throw;
+			}
 
 		}
 
 		[HttpPost("api/GiftCards")]
-		public JsonResult addGiftCard([FromBody] Dictionary<string, object> JSONinput)
+		public IActionResult addGiftCard([FromBody] Dictionary<string, object> JSONinput)
 		{
-			var giftCardsJson = JsonConvert.SerializeObject(JSONinput["giftCards"], Newtonsoft.Json.Formatting.Indented);
-			var giftCard = JsonConvert.DeserializeObject<GiftCards>(giftCardsJson);
+			GiftCards giftCard = new GiftCards();
+
+			try
+			{
+				var giftCardsJson = JsonConvert.SerializeObject(JSONinput["giftCards"], Newtonsoft.Json.Formatting.Indented);
+				giftCard = JsonConvert.DeserializeObject<GiftCards>(giftCardsJson);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Error parsing JSON");
+				throw;
+			}
 
 			string StoredProcedureName = GiftCardsProcedures.addGiftCard;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@code", giftCard.code);
 			Parameters.Add("@value", giftCard.value);
 			Parameters.Add("@expiryDate", giftCard.expiryDate);
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if(returnCode == -1)
+				{
+					return StatusCode(200, "Giftcard added successfully");
+				}else
+				{
+					return StatusCode(500, "Failed to add giftcard");
+				}
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Failed to add giftcard");
+				throw;
+			}
+
 
 		}
 
 		[HttpPut("api/GiftCards/{code}/{claimingUserId}")]
-		public JsonResult redeemGiftCard(string code, int claimingUserId )
+		public IActionResult redeemGiftCard(string code, int claimingUserId )
 		{
 			string StoredProcedureName = GiftCardsProcedures.redeemGiftCard;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@code", code);
 			Parameters.Add("@claimingUserId", claimingUserId);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if(returnCode != -1)
+				{
+					return StatusCode(500, "Giftcard code is invalid");
+				}else
+				{
+					return StatusCode(200, "Giftcard redeemed successfully");
+				}
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal Server Error");
+				throw;
+			}
 		}
 
 		[HttpDelete("api/GiftCards/{id}")]
-		public JsonResult deleteGiftCard(int id)
+		public IActionResult deleteGiftCard(int id)
 		{
 			string StoredProcedureName = GiftCardsProcedures.deleteGiftCard;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
 			Parameters.Add("@id", id);
 
-			return Json(dbMan.ExecuteNonQuery(StoredProcedureName, Parameters));
+			try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+				if(returnCode == -1)
+				{
+					return StatusCode(200, "Giftcard deleted successfully");
+				}else
+				{
+					return StatusCode(500, "Internal server error");
+				}
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal server error");
+				throw;
+			}
 		}
 
-	}
+        [HttpGet("api/searchGiftCards/{text}")]
+        public IActionResult searchInGiftCards(string text)
+        {
+            string StoredProcedureName = GiftCardsProcedures.searchInGiftCards;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@search", text);
+            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+        }
+
+    }
 }

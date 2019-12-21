@@ -133,6 +133,18 @@ namespace Shoryan.Controllers
 				return StatusCode(500, "Error parsing JSON");
 			}
 
+			string StoredProcedureNameTele = UsersProcedures.checkPhoneNumberExists;
+			Dictionary<string, object> ParametersTele = new Dictionary<string, object>();
+			ParametersTele.Add("@phonenumber", User_Details.phoneNumbers[0]);
+
+			DataTable dtt = dbMan.ExecuteReader(StoredProcedureNameTele, ParametersTele);
+
+			if(dtt!= null)
+			{
+				return StatusCode(500, "Phonenumber already exists");
+			}
+
+
 			if (User_Details.type == "Normal")
 			{
 				var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
@@ -493,7 +505,14 @@ namespace Shoryan.Controllers
 			{
 				return StatusCode(500, "User id not found");
 			}
-            
+        }
+        [HttpGet("api/searchUsers/{text}")]
+        public IActionResult searchInUsers(string text)
+        {
+            string StoredProcedureName = UsersProcedures.searchInUsers;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@search", text);
+            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
         }
     }
 

@@ -248,34 +248,25 @@ namespace Shoryan.Controllers
 		[HttpGet("api/drugsByName/{drugName}")]
 		public IActionResult getDrugsByName(string drugName)
 		{
-			string StoredProcedureName = DrugsProcedures.getDrugsByName;
-			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			var allDrugs = getAllDrugs();
+			var allDrugsJsonResult = (JsonResult)(allDrugs);
 
-			Parameters.Add("@name", drugName);
+			List<Drugs> drugsList = new List<Drugs>();
 
-			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-			if (dt == null)
-				return Json(null);
+			var DrugsNameJson = JsonConvert.SerializeObject(allDrugsJsonResult.Value, Newtonsoft.Json.Formatting.Indented);
+			drugsList = JsonConvert.DeserializeObject<List<Drugs>>(DrugsNameJson);
 
-			List<Drugs> drugList = new List<Drugs>();
+			var newDrugsList = new List<Drugs>();
 
-			for (int i = 0;i<dt.Rows.Count;i++)
+			for(int i=0;i<drugsList.Count;i++)
 			{
-				Drugs Drug = new Drugs();
-				try
+				if(drugsList[i].name.ToLower().Contains(drugName.ToLower()))
 				{
-					var DrugsJson = JsonConvert.SerializeObject(Json(getDrugById(Convert.ToInt32(dt.Rows[0][0]))).Value, Newtonsoft.Json.Formatting.Indented);
-					Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
+					newDrugsList.Add(drugsList[i]);
 				}
-				catch (Exception)
-				{
-
-					return StatusCode(500, "Error parsing JSON");
-				}
-
-				drugList.Add(Drug);
 			}
-			return Json(drugList);
+
+			return Json(newDrugsList);
 		}
 
 		[HttpGet("api/drugImg/{drugId}")]
@@ -541,23 +532,6 @@ namespace Shoryan.Controllers
 				return StatusCode(500, "Error parsing JSON");
 			}
 
-
-			foreach (var x in Drug.effectiveSubstances)
-			{
-				deleteEffectiveSubstance(Drug.id, x);
-			}
-
-			foreach(var x in Drug.categoriesIds)
-			{
-				deleteDrugFromCategory(drugId, x);
-			}
-
-			int i = 1;
-			foreach (var x in Drug.imgsUrls)
-			{
-				deleteDrugImgUrl(drugId, i++);
-			}
-
 			string StoredProcedureName = DrugsProcedures.deleteDrug;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@id", drugId);
@@ -577,6 +551,11 @@ namespace Shoryan.Controllers
 				return StatusCode(500, "Internal Server Error");
 			}
 		}
+        [HttpGet("api/searchDrugs/{text}")]
+        public IActionResult searchInDrugs(string text)
+        {
+            return (getDrugsByName(text));
+        }
 
-	}
+    }
 }

@@ -12,6 +12,7 @@ namespace DBapplication
         public static string getListingById = "getListingById";
         public static string getListingsInOrder = "getListingsInOrder";
         public static string getListingsByDrugId = "getListingsByDrugId";
+        public static string searchInListings = "searchInListings";
 
     }
 }

@@ -26,9 +26,6 @@ namespace Shoryan.Controllers
                 //string webRootPath = _hostingEnvironment.WebRootPath;
                 //string newPath = Path.Combine(webRootPath, folderName);
 
-
-                
-
                 string webRootPath = _hostingEnvironment.WebRootPath;
 
                 var newPath = Path.Combine(webRootPath, folderName);

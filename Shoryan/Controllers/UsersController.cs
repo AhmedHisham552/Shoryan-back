@@ -113,7 +113,8 @@ namespace Shoryan.Controllers
 		type:"Normal"
 		},
 		NormalUsers:{
-			gender:"M"
+			gender:"M",
+            area:""
 		},
 	}*/
 
@@ -145,6 +146,7 @@ namespace Shoryan.Controllers
 				Parameters.Add("@imgUrl", User_Details.imgUrl);
 				Parameters.Add("@type", User_Details.type);
 				Parameters.Add("@gender", NormalUsers.gender);
+                Parameters.Add("@area", NormalUsers.area);
 				
 				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 				
@@ -267,7 +269,7 @@ namespace Shoryan.Controllers
                                         "area":"value"
 	                                    }
                                   }
-          ELSE JSON :
+          ELSE JSON NORMAL :
                          {
                                     "User_Details":{"id":28,
 	                                    "gender":"M",
@@ -280,6 +282,9 @@ namespace Shoryan.Controllers
 	                                    "password":"123456",
 	                                    "imgUrl":"",
 	                                    "type":"Normal"
+                                        "NormalUsers":{
+                                            "area":" "
+                                        }
 	                      }
                 
                 
@@ -326,7 +331,41 @@ namespace Shoryan.Controllers
 					return StatusCode(500, "Internal Server Error");
 				}
 			}
-           else 
+           else if(User_Details.type == "Normal")
+            {
+                NormalUsers NormalUser = new NormalUsers();
+                try
+                {
+                    var NormalJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
+                    NormalUser = JsonConvert.DeserializeObject<NormalUsers>(NormalJson);
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Error parsing JSON");
+                }
+                string StoredProcedureName = UsersProcedures.editUserDetails;
+                Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                Parameters.Add("@userId", User_Details.id);
+                Parameters.Add("@name", User_Details.name);
+                Parameters.Add("@email", User_Details.email);
+                Parameters.Add("@password", User_Details.password);
+                Parameters.Add("@address", User_Details.address);
+                Parameters.Add("@imgUrl", User_Details.imgUrl);
+                Parameters.Add("@area", NormalUser.area);
+                try
+                {
+                    int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
+                    if (returnCode == -1)
+                        return StatusCode(200, "User edited successfully");
+                    else
+                        return StatusCode(500, "Internal Server Error");
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Internal Server Error");
+                }
+            }
+            else
             {
                 string StoredProcedureName = UsersProcedures.editUserDetails;
                 Dictionary<string, object> Parameters = new Dictionary<string, object>();
@@ -337,6 +376,7 @@ namespace Shoryan.Controllers
                 Parameters.Add("@address", User_Details.address);
                 Parameters.Add("@imgUrl", User_Details.imgUrl);
                 Parameters.Add("@area", DBNull.Value);
+
                 try
                 {
                     int returnCode = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);

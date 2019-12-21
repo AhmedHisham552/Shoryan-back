@@ -10,5 +10,6 @@ namespace Shoryan.Models
         public int id { get; set; }
         public char gender { get; set; }
         public int balance { get; set; }
+        public string area { get; set; }
     }
 }

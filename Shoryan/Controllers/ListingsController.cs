@@ -30,25 +30,41 @@ namespace Shoryan.Controllers
             string StoredProcedureName = ListingsProcedures.getAllListing;
 
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			DataTable dt;
+			try
+			{
+				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+				if (dt == null) return StatusCode(500, "Internal server error");
+				else return Json(dt);
 
-            DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-
-            if (dt == null) return StatusCode(500);
-            return Json(dt);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal server error");
+				throw;
+			}
 
         }
 
         [HttpGet("api/Listings/{listingId}")]
         public IActionResult getListingById(int listingId)
         {
-
             string StoredProcedureName = ListingsProcedures.getListingById;
 
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@ListingId", listingId);
+			DataTable dt;
+			try
+			{
+				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+				if (dt == null) return StatusCode(500, "Listing not found");
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Listing not found");
+				throw;
+			}
 
-            DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-            if (dt == null) return StatusCode(404);
 
 			Listings listing = new Listings();
 			listing.id = Convert.ToInt32(dt.Rows[0]["id"]);

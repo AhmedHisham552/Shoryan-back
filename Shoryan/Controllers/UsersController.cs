@@ -133,6 +133,18 @@ namespace Shoryan.Controllers
 				return StatusCode(500, "Error parsing JSON");
 			}
 
+			string StoredProcedureNameTele = UsersProcedures.checkPhoneNumberExists;
+			Dictionary<string, object> ParametersTele = new Dictionary<string, object>();
+			ParametersTele.Add("@phonenumber", User_Details.phoneNumbers[0]);
+
+			DataTable dtt = dbMan.ExecuteReader(StoredProcedureNameTele, ParametersTele);
+
+			if(dtt!= null)
+			{
+				return StatusCode(500, "Phonenumber already exists");
+			}
+
+
 			if (User_Details.type == "Normal")
 			{
 				var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);

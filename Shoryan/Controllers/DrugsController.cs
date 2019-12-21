@@ -541,23 +541,6 @@ namespace Shoryan.Controllers
 				return StatusCode(500, "Error parsing JSON");
 			}
 
-
-			foreach (var x in Drug.effectiveSubstances)
-			{
-				deleteEffectiveSubstance(Drug.id, x);
-			}
-
-			foreach(var x in Drug.categoriesIds)
-			{
-				deleteDrugFromCategory(drugId, x);
-			}
-
-			int i = 1;
-			foreach (var x in Drug.imgsUrls)
-			{
-				deleteDrugImgUrl(drugId, i++);
-			}
-
 			string StoredProcedureName = DrugsProcedures.deleteDrug;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 			Parameters.Add("@id", drugId);

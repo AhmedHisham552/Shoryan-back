@@ -27,8 +27,16 @@ namespace Shoryan.Controllers
         {
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@orderId", orderId);
-            DataTable dt = dbMan.ExecuteReader("getItemsInOrder", Parameters);
+			DataTable dt;
 
+			try
+			{
+				dt = dbMan.ExecuteReader("getItemsInOrder", Parameters);
+			}
+			catch (Exception)
+			{
+				throw;
+			}
 
             List<int> listingsIds = new List<int>();
             if (dt != null)
@@ -45,10 +53,18 @@ namespace Shoryan.Controllers
         public IActionResult addOrder([FromBody] Dictionary<string, object> JSONinput)
         {
 
-            //takes an order json with its listings
-
-            var orderJson = JsonConvert.SerializeObject(JSONinput["Order"], Newtonsoft.Json.Formatting.Indented);
-            var order = JsonConvert.DeserializeObject<Orders>(orderJson);
+			//takes an order json with its listings
+			var order = new Orders();
+			try
+			{
+				var orderJson = JsonConvert.SerializeObject(JSONinput["Order"], Newtonsoft.Json.Formatting.Indented);
+				order = JsonConvert.DeserializeObject<Orders>(orderJson);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Error parsing JSON");
+				throw;
+			}
 
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@OrderDate", order.orderDate);
@@ -60,18 +76,21 @@ namespace Shoryan.Controllers
 
             DataTable dt = dbMan.ExecuteReader( OrdersProcedures.addOrder , Parameters);
 
-            if (dt == null) return StatusCode(500);
+            if (dt == null) return StatusCode(500, "Internal server error");
 
-            foreach (var listingId in order.listingsIds)
-            {
-                Dictionary<string, object> Params = new Dictionary<string, object>();
-                Params.Add("@orderId", dt.Rows[0][0]);
-                Params.Add("@listingId", listingId);
-                int returnedValue = dbMan.ExecuteNonQuery(OrdersProcedures.addItemToOrder, Params);
-                if (returnedValue == 0) return StatusCode(500);
-            }
+			if (order.listingsIds.Count != 0)
+				foreach (var listingId in order.listingsIds)
+				{
+					Dictionary<string, object> Params = new Dictionary<string, object>();
+					Params.Add("@orderId", dt.Rows[0][0]);
+					Params.Add("@listingId", listingId);
+					int returnedValue = dbMan.ExecuteNonQuery(OrdersProcedures.addItemToOrder, Params);
+					if (returnedValue == 0) return StatusCode(500);
+				}
+			else
+				return StatusCode(500, "Order is empty");
 
-            return Json("Order added successfully");
+            return StatusCode(200, "Order added successfully");
 
         }
 
@@ -83,7 +102,7 @@ namespace Shoryan.Controllers
 
             DataTable dt = dbMan.ExecuteReader(OrdersProcedures.getOrderById, Parameters);
 
-            if (dt == null) return StatusCode(404);
+            if (dt == null) return StatusCode(404, "Order not found");
 
             Orders order = new Orders();
             order.id = orderId;

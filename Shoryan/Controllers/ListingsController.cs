@@ -30,25 +30,41 @@ namespace Shoryan.Controllers
             string StoredProcedureName = ListingsProcedures.getAllListing;
 
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			DataTable dt;
+			try
+			{
+				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+				if (dt == null) return StatusCode(500, "Internal server error");
+				else return Json(dt);
 
-            DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-
-            if (dt == null) return StatusCode(500);
-            return Json(dt);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal server error");
+				throw;
+			}
 
         }
 
         [HttpGet("api/Listings/{listingId}")]
         public IActionResult getListingById(int listingId)
         {
-
             string StoredProcedureName = ListingsProcedures.getListingById;
 
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@ListingId", listingId);
+			DataTable dt;
+			try
+			{
+				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+				if (dt == null) return StatusCode(500, "Listing not found");
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Listing not found");
+				throw;
+			}
 
-            DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
-            if (dt == null) return StatusCode(404);
 
 			Listings listing = new Listings();
 			listing.id = Convert.ToInt32(dt.Rows[0]["id"]);
@@ -92,8 +108,8 @@ namespace Shoryan.Controllers
 
             int returnValue = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
 
-            if (returnValue == 0) return StatusCode(500);
-            return Json("Data Added successfully");
+            if (returnValue == 0) return StatusCode(500, "Incorrect listing data");
+            return StatusCode(200,"Listing added successfully");
 
 		}
 
@@ -106,7 +122,15 @@ namespace Shoryan.Controllers
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@orderId", orderId);
 
-            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal server error");
+				throw;
+			}
 
         }
         [HttpGet("api/ListingsOfDrug/{drugId}")]
@@ -118,7 +142,15 @@ namespace Shoryan.Controllers
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@drugId", drugId);
 
-            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			try
+			{
+				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal server error");
+				throw;
+			}
 
         }
         [HttpGet("api/searchListings/{text}")]

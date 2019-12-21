@@ -67,8 +67,17 @@ namespace Shoryan.Controllers
         [HttpPost("api/Listings")]
 		public IActionResult addListings([FromBody] Dictionary<string, object> JSONinput)
 		{
-            var listingsJson = JsonConvert.SerializeObject(JSONinput, Newtonsoft.Json.Formatting.Indented);
-            var listing = JsonConvert.DeserializeObject<Listings>(listingsJson);
+			Listings listing;
+			try
+			{
+				var listingsJson = JsonConvert.SerializeObject(JSONinput, Newtonsoft.Json.Formatting.Indented);
+				listing = JsonConvert.DeserializeObject<Listings>(listingsJson);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Error parsing JSON");
+			}
+
 
 
             string StoredProcedureName = ListingsProcedures.addListing;

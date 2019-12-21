@@ -12,7 +12,7 @@ using Shoryan.Models;
 using Shoryan.StoredProcedures;
 using Shoryan.Controllers;
 
-namespace Shoryan.Models
+namespace Shoryan.Controllers
 {
     [ApiController]
 	public class UserCartController : Controller

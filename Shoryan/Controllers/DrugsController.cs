@@ -107,27 +107,76 @@ namespace Shoryan.Controllers
 		[HttpGet("api/drugs/")]
 		public IActionResult getAllDrugs()
 		{
-			List<int> ids = aux_getAllDrugsIds();
+			string StoredProcedureName = DrugsProcedures.getAllDrugEffectiveSubstances;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
-			List<Drugs> totalDrugs = new List<Drugs>();
-			foreach(var id in ids)
+			DataTable EffectiveSubstances = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+
+			string StoredProcedureName2 = DrugsProcedures.getAllDrugImages;
+			Dictionary<string, object> Parameters2 = new Dictionary<string, object>();
+
+			DataTable Drugs_imgs_urls = dbMan.ExecuteReader(StoredProcedureName2, Parameters2);
+
+			string StoredProcedureName3 = DrugsProcedures.getAllDrugCategories;
+			Dictionary<string, object> Parameters3 = new Dictionary<string, object>();
+			DataTable Drugs_in_categories = dbMan.ExecuteReader(StoredProcedureName3, Parameters3);
+
+			string StoredProcedureName4 = DrugsProcedures.getAllDrugs;
+			Dictionary<string, object> Parameters4 = new Dictionary<string, object>();
+			DataTable DrugsInformation = dbMan.ExecuteReader(StoredProcedureName4, Parameters4);
+
+
+			Dictionary<int, Drugs> DrugsDict = new Dictionary<int, Drugs>();
+
+			for(int i=0;i<DrugsInformation.Rows.Count;i++)
 			{
 				Drugs Drug = new Drugs();
-				try
-				{
-					JsonResult x = (JsonResult)(getDrugById(id));
-					var DrugsJson = JsonConvert.SerializeObject( x.Value, Newtonsoft.Json.Formatting.Indented);
-					Drug = JsonConvert.DeserializeObject<Drugs>(DrugsJson);
-				}
-				catch (Exception)
-				{
-					return StatusCode(500, "Error parsing JSON");
-				}
+				Drug.effectiveSubstances = new List<string>();
+				Drug.categoriesIds = new List<int>();
+				Drug.imgsUrls = new List<string>();
+				Drug.id = Convert.ToInt32(DrugsInformation.Rows[i]["id"]);
+				Drug.name = Convert.ToString(DrugsInformation.Rows[i]["name"]);
+				Drug.officialPrice = Convert.ToInt32(DrugsInformation.Rows[i]["officialPrice"]);
 
-				totalDrugs.Add(Drug);
+				DrugsDict.Add(Drug.id, Drug);
 			}
 
-			return Json(totalDrugs);
+
+			for(int i=0;i<EffectiveSubstances.Rows.Count;i++)
+			{
+				int drugId = Convert.ToInt32(EffectiveSubstances.Rows[i]["drugId"]);
+				string substanceName = Convert.ToString(EffectiveSubstances.Rows[i]["name"]);
+
+				if (DrugsDict.ContainsKey(drugId))
+				{
+					DrugsDict[drugId].effectiveSubstances.Add(substanceName);
+				}
+			}
+
+			for (int i = 0; i < Drugs_in_categories.Rows.Count; i++)
+			{
+				int drugId = Convert.ToInt32(Drugs_in_categories.Rows[i]["drug_id"]);
+				int categoryId = Convert.ToInt32(Drugs_in_categories.Rows[i]["category_id"]);
+
+				if (DrugsDict.ContainsKey(drugId))
+				{
+					DrugsDict[drugId].categoriesIds.Add(categoryId);
+				}
+			}
+
+			for (int i = 0; i < Drugs_imgs_urls.Rows.Count; i++)
+			{
+				int drugId = Convert.ToInt32(Drugs_imgs_urls.Rows[i]["drug_id"]);
+				string drugImgUrl = Convert.ToString(Drugs_imgs_urls.Rows[i]["url"]);
+
+				if (DrugsDict.ContainsKey(drugId))
+				{
+					DrugsDict[drugId].imgsUrls.Add(drugImgUrl);
+				}
+			}
+
+			return Json(DrugsDict.Values);
+
 		}
 
 

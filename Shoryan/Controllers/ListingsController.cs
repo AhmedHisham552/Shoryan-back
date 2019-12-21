@@ -100,6 +100,18 @@ namespace Shoryan.Controllers
             return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
 
         }
+        [HttpGet("api/ListingsOfDrug/{drugId}")]
+        public IActionResult getListingsByDrugId(int drugId)
+        {
+
+            string StoredProcedureName = ListingsProcedures.getListingsByDrugId;
+
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@drugId", drugId);
+
+            return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+
+        }
 
     }
 }

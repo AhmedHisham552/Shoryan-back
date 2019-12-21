@@ -94,8 +94,6 @@ namespace Shoryan.Controllers
 				return StatusCode(500, "Error parsing JSON");
 			}
 
-
-
             string StoredProcedureName = ListingsProcedures.addListing;
 
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
@@ -106,10 +104,15 @@ namespace Shoryan.Controllers
             Parameters.Add("@elbas", listing.elbas);
             Parameters.Add("@price", listing.price);
 
-            int returnValue = dbMan.ExecuteNonQuery(StoredProcedureName, Parameters);
-
-            if (returnValue == 0) return StatusCode(500, "Incorrect listing data");
-            return StatusCode(200,"Listing added successfully");
+			try
+			{
+				return Json(Convert.ToInt32(dbMan.ExecuteScalar(StoredProcedureName, Parameters)));
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Incorrect listing data");
+				throw;
+			}
 
 		}
 

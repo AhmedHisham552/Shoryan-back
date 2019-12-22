@@ -287,6 +287,45 @@ namespace Shoryan.Controllers
 			
 		}
 
+		[HttpGet("api/similarDrugs/{drugId}")]
+		public IActionResult getSimilarDrugs(int drugId)
+		{
+			string StoredProcedureName = DrugsProcedures.getSimilarDrugs;
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@drugId", drugId);
+
+			DataTable dt;
+			try
+			{
+				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal Server Error");
+				throw;
+			}
+
+			List<Drugs> returnVals = new List<Drugs>();
+			if(dt!=null)
+				for(int i=0;i<dt.Rows.Count;i++)
+				{
+					Drugs x = new Drugs();
+					x.imgsUrls = new List<string>();
+					x.id = Convert.ToInt32(dt.Rows[i]["id"]);
+					if (dt.Rows[i]["name"] != null)
+						x.name = Convert.ToString(dt.Rows[i]["name"]);
+					if (dt.Rows[i]["officialPrice"] != null)
+						x.officialPrice = Convert.ToInt32(dt.Rows[i]["officialPrice"]);
+					if(dt.Rows[i]["url"] != null)
+						x.imgsUrls.Add(Convert.ToString(dt.Rows[i]["url"]));
+					returnVals.Add(x);
+				}
+
+
+			return Json(returnVals);
+		}
+
+
 		[HttpGet("api/drugsByName/{drugName}")]
 		public IActionResult getDrugsByName(string drugName)
 		{

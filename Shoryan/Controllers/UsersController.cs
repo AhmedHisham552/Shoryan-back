@@ -147,19 +147,8 @@ namespace Shoryan.Controllers
 
 			if (User_Details.type == "Normal")
 			{
-				var NormalUsers = new NormalUsers();
-
-				try
-				{
-					var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
-					NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
-				}
-				catch (Exception)
-				{
-					return StatusCode(500, "Fill in the missing data");
-					throw;
-				}
-
+				var NormalUsersJson = JsonConvert.SerializeObject(JSONinput["NormalUsers"], Newtonsoft.Json.Formatting.Indented);
+				var NormalUsers = JsonConvert.DeserializeObject<NormalUsers>(NormalUsersJson);
 				string StoredProcedureName = UsersProcedures.addUser;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@name", User_Details.name);
@@ -186,17 +175,8 @@ namespace Shoryan.Controllers
 			}
 			else if(User_Details.type == "Courier")
 			{
-				var Couriers = new Couriers();
-				try
-				{
-					var CouriersJson = JsonConvert.SerializeObject(JSONinput["Couriers"], Newtonsoft.Json.Formatting.Indented);
-					Couriers = JsonConvert.DeserializeObject<Couriers>(CouriersJson);
-				}
-				catch (Exception)
-				{
-					return StatusCode(500, "Fill in the missing data");
-					throw;
-				}        
+				var CouriersJson= JsonConvert.SerializeObject(JSONinput["Couriers"], Newtonsoft.Json.Formatting.Indented);
+				var Couriers = JsonConvert.DeserializeObject<Couriers>(CouriersJson);             
 				string StoredProcedureName = UsersProcedures.addUser;
 				Dictionary<string, object> Parameters = new Dictionary<string, object>();
 				Parameters.Add("@name", User_Details.name);

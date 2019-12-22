@@ -13,6 +13,6 @@ namespace DBapplication
         public static string getListingsInOrder = "getListingsInOrder";
         public static string getListingsByDrugId = "getListingsByDrugId";
         public static string searchInListings = "searchInListings";
-
+        public static string addListingImgUrl = "addListingImgUrl";
     }
 }

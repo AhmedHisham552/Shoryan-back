@@ -1,4 +1,5 @@
 ﻿
+using DBapplication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,10 +13,12 @@ namespace Shoryan.Controllers
     public class UploadController : Controller
     {
         private IHostingEnvironment _hostingEnvironment;
+        DBManager dbMan;
 
         public UploadController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
+            dbMan = new DBManager();
         }
 
         [HttpPost("api/upload"), DisableRequestSizeLimit]
@@ -87,15 +90,23 @@ namespace Shoryan.Controllers
                     }
 
                 }
-                //var file = Request.Form.Files[0];
-                //var files = Request.Form.Files;
-                
+
+                string StoredProcedureName = ListingsProcedures.addListingImgUrl;
 
 
-                
-                
+                int i = 0;
+                foreach (var listingImgUrl in listingsImgsUrls)
+                {
+                    Dictionary<string, object> Parameters = new Dictionary<string, object>();
+                    Parameters.Add("@listing_id", listingId);
+                    Parameters.Add("@img_no",i);
+                    Parameters.Add("@url", listingImgUrl);
 
-                
+                    dbMan.ExecuteReader(StoredProcedureName, Parameters);
+                    i++;
+                }
+
+
 
                 return StatusCode(200, listingsImgsUrls);
             }

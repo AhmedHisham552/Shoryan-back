@@ -230,18 +230,60 @@ namespace Shoryan.Controllers
 
 			string StoredProcedureName = DrugsProcedures.getDrugsByCategory;
 			Dictionary<string, object> Parameters = new Dictionary<string, object>();
-
 			Parameters.Add("@categoryId", categoryId);
 
+			DataTable DrugsInCategory;
 			try
 			{
-				return Json(dbMan.ExecuteReader(StoredProcedureName, Parameters));
+				DrugsInCategory = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 			}
 			catch (Exception)
 			{
-
-				return StatusCode(500, "Category not found");
+				return StatusCode(404, "Category not found");
+				throw;
 			}
+
+
+			string StoredProcedureName2 = DrugsProcedures.getAllDrugImages;
+			Dictionary<string, object> Parameters2 = new Dictionary<string, object>();
+
+			DataTable Drugs_imgs_urls = dbMan.ExecuteReader(StoredProcedureName2, Parameters2);
+
+
+			Dictionary<int, Drugs> DrugsDict = new Dictionary<int, Drugs>();
+			if (DrugsInCategory != null)
+			{
+				for (int i = 0; i < DrugsInCategory.Rows.Count; i++)
+				{
+					Drugs Drug = new Drugs();
+					Drug.effectiveSubstances = new List<string>();
+					Drug.categoriesIds = new List<int>();
+					Drug.imgsUrls = new List<string>();
+					Drug.id = Convert.ToInt32(DrugsInCategory.Rows[i]["id"]);
+					Drug.name = Convert.ToString(DrugsInCategory.Rows[i]["name"]);
+					Drug.officialPrice = Convert.ToInt32(DrugsInCategory.Rows[i]["officialPrice"]);
+
+					DrugsDict.Add(Drug.id, Drug);
+				}
+			}
+
+			if (Drugs_imgs_urls != null)
+			{
+				for (int i = 0; i < Drugs_imgs_urls.Rows.Count; i++)
+				{
+					int drugId = Convert.ToInt32(Drugs_imgs_urls.Rows[i]["drug_id"]);
+					if (Drugs_imgs_urls.Rows[i]["url"] == null)
+						continue;
+					string drugImgUrl = Convert.ToString(Drugs_imgs_urls.Rows[i]["url"]);
+
+					if (DrugsDict.ContainsKey(drugId))
+					{
+						DrugsDict[drugId].imgsUrls.Add(drugImgUrl);
+					}
+				}
+			}
+
+			return Json(DrugsDict.Values);
 			
 		}
 

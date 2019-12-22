@@ -418,8 +418,12 @@ namespace Shoryan.Controllers
 			Parameters.Add("@userId", JSONinput["id"]);
 			if (JSONinput.ContainsKey("name"))
 				Parameters.Add("@name", JSONinput["name"]);
+			else
+				Parameters.Add("@name", DBNull.Value);
 			if (JSONinput.ContainsKey("email"))
 				Parameters.Add("@email", JSONinput["email"]);
+			else
+				Parameters.Add("@email", DBNull.Value);
 			if (JSONinput.ContainsKey("password"))
 				if (JSONinput["password"] != null)
 					Parameters.Add("@password", JSONinput["password"]);
@@ -431,10 +435,16 @@ namespace Shoryan.Controllers
 				Parameters.Add("@newpassword", JSONinput["newpassword"]);
 			if (JSONinput.ContainsKey("address"))
 				Parameters.Add("@address", JSONinput["address"]);
+			else
+				Parameters.Add("@address", DBNull.Value);
 			if (JSONinput.ContainsKey("imgUrl"))
 				Parameters.Add("@imgUrl", JSONinput["imgUrl"]);
+			else
+				Parameters.Add("@imgUrl", DBNull.Value);
 			if (JSONinput.ContainsKey("area"))
 				Parameters.Add("@area", JSONinput["area"]);
+			else
+				Parameters.Add("@area", DBNull.Value);
 			Parameters.Add("@type", JSONinput["type"]);
 
 			try

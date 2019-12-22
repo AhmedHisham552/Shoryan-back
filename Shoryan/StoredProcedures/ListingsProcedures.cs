@@ -14,5 +14,7 @@ namespace DBapplication
         public static string getListingsByDrugId = "getListingsByDrugId";
         public static string searchInListings = "searchInListings";
         public static string addListingImgUrl = "addListingImgUrl";
-    }
+		public static string getListingImgsById = "getListingImgsById";
+		
+	}
 }

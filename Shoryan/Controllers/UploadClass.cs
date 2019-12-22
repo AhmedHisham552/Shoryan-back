@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http.Headers;
 namespace Shoryan.Controllers
@@ -47,6 +49,55 @@ namespace Shoryan.Controllers
                 }
 
                 return StatusCode(200, relativePath);
+            }
+            catch (System.Exception ex)
+            {
+                return Json("Upload Failed: " + ex.Message);
+            }
+        }
+
+        [HttpPost("api/uploadListings/{listingId}"), DisableRequestSizeLimit]
+        public ActionResult UploadListings(int listingId)
+        {
+            try
+            {
+                string folderName = Path.Combine("images","listings", Convert.ToString(listingId));
+
+                string webRootPath = _hostingEnvironment.WebRootPath;
+                var newPath = Path.Combine(webRootPath, folderName);
+
+                List<string> listingsImgsUrls = new List<string>();
+
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                }
+
+                foreach (var file in Request.Form.Files)
+                {
+                    if (file.Length > 0)
+                    {
+                        string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                        listingsImgsUrls.Add(Path.Combine(folderName, fileName));
+                        string fullPath = Path.Combine(newPath, fileName);
+                        using (var stream = new FileStream(fullPath, FileMode.Create))
+                        {
+                            file.CopyTo(stream);
+                        }
+                    }
+
+                }
+                //var file = Request.Form.Files[0];
+                //var files = Request.Form.Files;
+                
+
+
+                
+                
+
+                
+
+                return StatusCode(200, listingsImgsUrls);
             }
             catch (System.Exception ex)
             {

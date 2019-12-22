@@ -185,5 +185,25 @@ namespace Shoryan.Controllers
             }
         }
 
+        [HttpGet("api/AreasDeliveredToByCourier/{courierId}")]
+        public IActionResult getAreasDeliveredToByCourier(int courierId)
+        {
+            string StoredProcedureName = StatisticsProcedures.getCouriersDeliveredtoAreasCount;
+            Dictionary<string, object> Parameters = new Dictionary<string, object>();
+            Parameters.Add("@courierid", courierId);
+            
+         
+            try
+            {
+                var dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+                return Json(dt);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal Server Error");
+                throw;
+            }
+        }
+
     }
 }

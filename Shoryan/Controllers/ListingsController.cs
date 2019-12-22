@@ -46,7 +46,40 @@ namespace Shoryan.Controllers
 
         }
 
-        [HttpGet("api/Listings/{listingId}")]
+		[HttpGet("api/ListingsImgs/{listingId}")]
+		public IActionResult getListingImgsById(int listingId)
+		{
+			string StoredProcedureName = ListingsProcedures.getListingImgsById;
+
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@listingId", listingId);
+			DataTable dt;
+			try
+			{
+				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Listing not found");
+				throw;
+			}
+
+			List<ListingImgsUrls> listings_imgs_urls = new List<ListingImgsUrls>();
+			if(dt!=null)
+				for(int i = 0;i<dt.Rows.Count;i++)
+				{
+					ListingImgsUrls x = new ListingImgsUrls();
+					x.listingId = listingId;
+					x.imgNo = Convert.ToInt32(dt.Rows[i]["img_no"]);
+					x.url = Convert.ToString(dt.Rows[i]["url"]);
+					listings_imgs_urls.Add(x);
+				}
+
+			return Json(listings_imgs_urls);
+		}
+
+
+		[HttpGet("api/Listings/{listingId}")]
         public IActionResult getListingById(int listingId)
         {
             string StoredProcedureName = ListingsProcedures.getListingById;

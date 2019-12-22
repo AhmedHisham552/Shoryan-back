@@ -36,7 +36,30 @@ namespace Shoryan.Controllers
 			}
         }
 
-        [HttpPost("api/Complaints")]
+		[HttpPost("api/answerComplaint/{complaintId}")]
+		public IActionResult answerComplaint(int complaintId)
+		{
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("@complaintId", complaintId);
+		   try
+			{
+				int returnCode = dbMan.ExecuteNonQuery(ComplaintsProcedure.setComplaintStatus, Parameters);
+				if(returnCode == -1)
+				{
+					return StatusCode(200, "Complaint answered successfully");
+				}
+				else
+				{
+					return StatusCode(500, "Failed to answer complaint");
+				}
+			}
+			catch (Exception e)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+		}
+
+		[HttpPost("api/Complaints")]
         public IActionResult addComplaint([FromBody] Dictionary<string, object> JSONinput)
         {
             var complaintJson = JsonConvert.SerializeObject(JSONinput["Complaint"], Newtonsoft.Json.Formatting.Indented);

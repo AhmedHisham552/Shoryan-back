@@ -10,6 +10,6 @@ namespace DBapplication
 		public static string getAllComplaints = "getAllComplaints"; 
 		public static string addComplaint = "addComplaint";
         public static string searchComplaints = "searchInComplaints";
-
+		public static string setComplaintStatus = "setComplaintStatus";
     }
 }

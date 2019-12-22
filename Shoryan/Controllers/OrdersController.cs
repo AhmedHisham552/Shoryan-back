@@ -142,11 +142,19 @@ namespace Shoryan.Controllers
         {
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@courierId", courierId);
+			DataTable dt;
 
-            DataTable dt = dbMan.ExecuteReader(OrdersProcedures.getCourierUpcomingOrders, Parameters);
+			try
+			{
+				dt = dbMan.ExecuteReader(OrdersProcedures.getCourierUpcomingOrders, Parameters);
+				return Json(dt);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal Server Error");
+				throw;
+			}
 
-            if (dt == null) return StatusCode(404);
-            return Json(dt);
         }
 
         [HttpGet("api/PastOrders/{courierId}")]
@@ -154,11 +162,19 @@ namespace Shoryan.Controllers
         {
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@courierId", courierId);
+			DataTable dt;
 
-            DataTable dt = dbMan.ExecuteReader(OrdersProcedures.getCourierPastOrders, Parameters);
-
-            if (dt == null) return StatusCode(404);
-            return Json(dt);
+			try
+			{
+				dt = dbMan.ExecuteReader(OrdersProcedures.getCourierPastOrders, Parameters);
+				return Json(dt);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal Server Error");
+				throw;
+			}
+           
         }
 
         [HttpGet("api/OrdersOfUser/{userId}")]
@@ -166,11 +182,18 @@ namespace Shoryan.Controllers
         {
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("@UserId", userId);
-
-            DataTable dt = dbMan.ExecuteReader(OrdersProcedures.getOrderOfUser, Parameters);
-
-            if (dt == null) return StatusCode(404);
-            return Json(dt);
+			DataTable dt;
+			try
+			{
+				dt = dbMan.ExecuteReader(OrdersProcedures.getOrderOfUser, Parameters);
+				return Json(dt);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Internal server error");
+				throw;
+			}
+            
         }
 
         [HttpPost("api/Order/{orderId}")]
@@ -181,9 +204,9 @@ namespace Shoryan.Controllers
             Parameters.Add("@orderId", orderId);
             int returnedValue = dbMan.ExecuteNonQuery(storedProcedureName, Parameters);
             if (returnedValue == -1)
-                return StatusCode(200);
+                return StatusCode(200, "Order delivered successfully");
             else
-                return StatusCode(500);
+                return StatusCode(500, "Internal Server Error");
             
         }
     }

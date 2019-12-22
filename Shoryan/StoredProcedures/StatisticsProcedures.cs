@@ -17,6 +17,10 @@ namespace DBapplication
         public static string getUserMoneyGained = "getMoneyGainedEachMonthbyUserIdandYear";
         public static string getCourierOrdersDeliveredCount = "getCourierOrdersDeliveredCountbyIdandYear";
         public static string getUserMoneySpent = "getMoneySpentEachMonthbyUserIdandYear";
+        public static string getCouriersDeliveredtoAreasCount = "getCouriersDeliveredtoAreasCount";
+
+
+        
 
 
 

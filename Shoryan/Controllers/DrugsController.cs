@@ -420,8 +420,17 @@ namespace Shoryan.Controllers
 
 			Parameters.Add("@name", Drug.name);
 			Parameters.Add("@officialPrice", Drug.officialPrice);
+			DataTable dt;
+			try
+			{
+				dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Error inserting drug");
+				throw;
+			}
 
-			DataTable dt = dbMan.ExecuteReader(StoredProcedureName, Parameters);
 			Drug.id = Convert.ToInt32(dt.Rows[0][0]);
 			int i = 1;
 			foreach (var drugImgUrl in Drug.imgsUrls)
